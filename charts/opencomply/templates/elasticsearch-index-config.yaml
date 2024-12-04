@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: elasticsearch-index-config
-  namespace: {{ .Release.Namespace }}
-data:
-  {{- (.Files.Glob "elasticsearch-data/*").AsConfig | nindent 2 }}
