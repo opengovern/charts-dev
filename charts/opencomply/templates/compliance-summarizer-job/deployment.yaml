@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compliance-summarizer
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: compliance-summarizer
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: compliance-summarizer
+  template:
+    metadata:
+      labels:
+        app: compliance-summarizer
+    spec:
+      serviceAccountName: compliance-summarizer
+      containers:
+        - name: compliance-summarizer
+          image: "{{ .Values.opengovernance.docker.registry }}/compliance-summarizer-job:{{ .Values.opengovernance.docker.tags.complianceSummarizerJob }}"
+          command: ["/compliance-summarizer-job"]
+          args:
+            - --id=$(WORKER_ID)
+          imagePullPolicy: Always
+          #resources:
+          #  limits:
+          #    cpu: 500m
+          #    memory: 1Gi
+          #  requests:
+          #    cpu: 500m
+          #    memory: 100Mi
+          env:
+            - name: NATS_URL
+              value: "{{ .Release.Name }}-nats.{{ .Release.Namespace }}.svc.cluster.local:4222"
+{{- include "elastic.envs" . | indent 12 }}
+
+            - name: INVENTORY_BASEURL
+              value: "http://inventory-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
+            - name: INTEGRATION_BASEURL
+              value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
+            - name: ESSINK_BASEURL
+              value: "http://es-sink-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
+            - name: PROMETHEUS_PUSH_ADDRESS
+              value: "prom-system-prometheus-pushgateway.prom-system.svc.cluster.local:9091"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compliance-summarizer-manuals
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: compliance-summarizer-manuals
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: compliance-summarizer-manuals
+  template:
+    metadata:
+      labels:
+        app: compliance-summarizer-manuals
+    spec:
+      serviceAccountName: compliance-summarizer
+      containers:
+        - name: compliance-summarizer
+          image: "{{ .Values.opengovernance.docker.registry }}/compliance-summarizer-job:{{ .Values.opengovernance.docker.tags.complianceSummarizerJob }}"
+          command: ["/compliance-summarizer-job"]
+          args:
+            - --id=$(WORKER_ID)
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1Gi
+            requests:
+              cpu: 500m
+              memory: 100Mi
+          env:
+            - name: NATS_URL
+              value: "{{ .Release.Namespace }}-nats.{{ .Release.Namespace }}.svc.cluster.local:4222"
+{{- include "elastic.envs" . | indent 12 }}
+
+            - name: INVENTORY_BASEURL
+              value: "http://inventory-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
+            - name: INTEGRATION_BASEURL
+              value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
+            - name: ESSINK_BASEURL
+              value: "http://es-sink-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
+            - name: PROMETHEUS_PUSH_ADDRESS
+              value: "prom-system-prometheus-pushgateway.prom-system.svc.cluster.local:9091"
+            - name: MANUAL_TRIGGER
+              value: "true"

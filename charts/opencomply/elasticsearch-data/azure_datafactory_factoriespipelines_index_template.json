@@ -1,0 +1,31 @@
+{
+  "index_patterns": [
+    "microsoft_datafactory_factoriespipelines"
+  ],
+  "template": {
+    "settings": {
+      "index":{
+        "mapping":{
+          "total_fields": {
+            "limit": "10000"
+          }
+        }
+      }
+    },
+    "mappings": {
+      "properties": {
+        "description.Pipeline.Properties.Activities": {
+          "enabled": false
+        }
+      }
+    }
+  },
+  "priority": 20,
+  "composed_of": [
+    "resource_component_template"
+  ],
+  "version": 1,
+  "_meta": {
+    "description": "Azure data factory factories pipelines index"
+  }
+}

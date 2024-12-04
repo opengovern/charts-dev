@@ -1,0 +1,107 @@
+{
+  "index_patterns": [
+    "inventory_summary"
+  ],
+  "template": {
+    "settings": {
+      "index": {
+        "max_inner_result_window": "10000",
+        "refresh_interval": "60s",
+        "number_of_shards": 18,
+        "mapping":{
+          "total_fields": {
+              "limit": "10000"
+          },
+          "nested_fields": {
+            "limit": "10000"
+          }
+        }
+      }
+    },
+    "mappings": {
+      "_source": {
+        "enabled": true
+      },
+      "dynamic": true,
+      "dynamic_templates": [
+        {
+          "strings_as_keyword": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "date": {
+            "match_mapping_type": "date",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "double": {
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "double",
+              "ignore_malformed": true
+            }
+          }
+        },
+        {
+          "long": {
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long",
+              "ignore_malformed": true
+            }
+          }
+        }
+      ],
+      "properties": {
+        "resource_id": {
+          "type": "keyword"
+        },
+        "resource_name": {
+          "type": "keyword"
+        },
+        "integration_type": {
+          "type": "keyword"
+        },
+        "resource_type": {
+          "type": "keyword"
+        },
+        "platform_id": {
+          "type": "keyword"
+        },
+        "integration_id": {
+          "type": "keyword"
+        },
+        "described_by": {
+          "type": "keyword"
+        },
+        "described_at": {
+          "type": "long"
+        },
+        "is_common": {
+          "type": "boolean"
+        },
+        "canonical_tags": {
+          "type": "nested",
+          "properties": {
+            "key": {
+              "type": "keyword"
+            },
+            "value": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  },
+  "_meta": {
+    "description": "Inventory summary index"
+  }
+}

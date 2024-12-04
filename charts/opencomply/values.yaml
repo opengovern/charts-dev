@@ -1,0 +1,331 @@
+global:
+  domain: og.app.domain
+  debugMode: false
+  size: lg
+
+opengovernance:
+  replicaCount: 1
+  docker:
+    registry: ghcr.io/opengovern
+    tags:
+      webui: v0.488.2
+      auth: v0.476.2
+      swagger: v0.476.2
+      checkupJob: v0.476.2
+      postInstallJob: v0.488.3
+      describeSchedulerService: v0.485.10
+      describeWorkerAWS: local-v0.1.4
+      describeWorkerGithub: local-v0.1.18
+      integration: v0.491.0
+      metadata: v0.485.10
+      inventory: v0.485.10
+      compliance: v0.485.10
+      complianceSummarizerJob: v0.485.10
+      complianceReportJob: v0.485.10
+      steampipe: v0.485.10
+      esSink: v0.476.2
+      queryRunnerJob: v0.485.10
+      queryValidatorJob: v0.485.10
+      demoImporterJob: v0.434.15
+      psqlImport: v0.434.15
+  apikey:
+    public: ""
+    private: ""
+    enabled: false
+  webui:
+    muiLicense: xxx
+  telemetry:
+    enabled: true
+    baseUrl: "http://stats.opencomply.io"
+  vault:
+    provider: hashicorp-vault
+    aws:
+      region: us-east-2
+      roleArn: "arn:aws:iam::xxx:role/xxx"
+      accessKey: ""
+      secretKey: ""
+    azure:
+      baseUrl: "https://xxx.vault.azure.net"
+      tenantId: "xxx"
+      clientId: "xxx"
+      clientSecret: "xxx"
+    keyID: "workspace-creds"
+# Added queryvalidator section
+queryvalidator:
+  enabled: false
+dex:
+  configSecret:
+    create: false
+  image:
+    repository: ghcr.io/opengovern/dex-login
+    pullPolicy: Always
+    tag: v0.477.1
+  config:
+    grpc:
+      addr: 'localhost:5557'
+      reflection: true
+    enablePasswordDB: true
+    connectors: []
+    expiry:
+      deviceRequests: "5m"
+      signingKeys: "6h"
+      idTokens: "24h"
+      refreshTokens:
+        reuseInterval: "3s"
+        validIfNotUsedFor: "2160h" # 90 days
+        absoluteLifetime: "3960h" # 165 days
+    logger:
+      level: "debug"
+      format: "text" # can also be "json"
+    storage:
+      type: postgres
+      config:
+        host: "opengovernance-postgresql-primary.opengovernance.svc.cluster.local" # postgresql host
+        port: 5432
+        database: dex
+        user: dex_service
+        password: "password"
+        ssl:
+          mode: "disable"
+    oauth2:
+      passwordConnector: local
+      skipApprovalScreen: true
+      alwaysShowLoginScreen: false
+externalPostgresql:
+  enabled: false
+  endpoint: "pg.example.com"
+  port: "5432"
+  masterUser: "postgres"
+  masterPassword: "postgres"
+  sslMode: disable
+postgresql:
+  enabled: true
+  architecture: replication
+  readReplicas:
+    replicaCount: 1
+  image:
+    registry: ghcr.io
+    repository: opengovern/postgres
+    tag: v0.474.1
+    pullPolicy: Always
+    debug: false
+  global:
+    postgresql:
+      auth:
+        postgresPassword: "postgres"
+  primary:
+    persistence:
+      size: 20Gi
+    configuration: |
+      listen_addresses = '*'
+      max_wal_senders = 10
+      shared_preload_libraries = 'pg_stat_statements'
+      
+      max_connections = 100
+      shared_buffers = 768MB
+      effective_cache_size = 2304MB
+      maintenance_work_mem = 384MB
+      checkpoint_completion_target = 0.9
+      wal_buffers = 16MB
+      default_statistics_target = 500
+      random_page_cost = 1.1
+      effective_io_concurrency = 200
+      work_mem = 4915kB
+      huge_pages = off
+      min_wal_size = 4GB
+      max_wal_size = 16GB
+    initdb:
+      user: "postgres"
+      password: "postgres"
+      scripts:
+        primary_init_script.sh: |
+          #!/bin/bash
+          ./init.sh
+
+    resources:
+      limits:
+        memory: '8Gi'
+        cpu: '4'
+      requests:
+        memory: "2Gi"
+        cpu: "2"
+    # These passwords are random generated
+    # Do not change them
+    # You can get the passwords running:
+    #`kubectl get secret postgres-secret -n <namespace-name> -o json | jq -r '.data.<key>' | base64 --decode`
+    extraEnvVars:
+      - name: POSTGRES_WORKSPACE_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: workspaceServiceUserPassword
+      - name: POSTGRES_AUTH_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: authServiceUserPassword
+      - name: POSTGRES_SUBSCRIPTION_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: subscriptionUserPassword
+
+      - name: POSTGRES_INFORMATION_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: informationUserPassword
+      - name: DEX_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: dexServiceUserPassword
+      - name : POSTGRES_DESCRIBE_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: describeSchedulerUserPassword
+      - name : POSTGRES_POLICY_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: policyServiceUserPassword
+      - name: POSTGRES_INVENTORY_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: inventoryServiceUserPassword
+      - name: POSTGRES_ASSISTANT_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: assistantServiceUserPassword
+      - name: POSTGRES_COMPLIANCE_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: complianceServiceUserPassword
+      - name: POSTGRES_METADATA_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: metadataServiceUserPassword
+      - name: POSTGRES_REPORTER_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: reporterServiceUserPassword
+      - name: POSTGRES_MIGRATOR_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: migratorServiceUserPassword
+      - name: POSTGRES_EXPORTER_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: postgresExporterUserPassword
+      - name: POSTGRES_STEAMPIPE_USER_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: steampipeUserPassword
+      - name: POSTGRES_ALERTING_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: alertingServiceUserPassword
+      - name: POSTGRES_INTEGRATION_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: integrationServiceUserPassword
+externalOpensearch:
+  enabled: false
+  endpoint: "https://opensearch.example.com"
+  roleArn: "arn:aws:iam::000000000000:role/opensearch-fullaccess"
+  awsRegion: "us-east-1"
+opensearch:
+  enabled: true
+  clusterName: opensearch-cluster
+  persistence:
+    size: 50Gi
+  opensearchJavaOpts: "-XX:-HeapDumpOnOutOfMemoryError -Xmx3072M -Xms3072M"
+  resources:
+  requests:
+    cpu: "500m"
+    memory: "4Gi"
+  replicas: 1
+  extraEnvs:
+    - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
+      value: myStrongPassword@123!
+    - name: AWS_REGION
+      value: "us-east-2"
+  sysctlInit:
+    enabled: true
+opensearch-dashboards:
+  enabled: false
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "500Mi"
+      cpu: "200m"
+    limits:
+      memory: "500Mi"
+      cpu: "200m"
+nats:
+  global:
+    labels:
+      app: job-queue
+  natsBox:
+    enabled: false
+  config:
+    cluster:
+      noAdvertise: true
+      enabled: false
+      replicas: 1
+    gateway:
+      enabled: false
+    jetstream:
+      enabled: true
+      memoryStore:
+        enabled: true
+        maxSize: 4Gi
+      # we are using jetstream as our job queue, because of that
+      # there is no need to have a persistent storage.
+      fileStore:
+        enabled: true
+        storageDirectory: /data
+        pvc:
+          enabled: true
+          size: 25Gi
+  container:
+    merge:
+      resources:
+        requests:
+          cpu: 200m
+          memory: 200Mi
+        limits:
+          cpu: 2500m
+          memory: 5Gi
+  statefulSet:
+    merge:
+      metadata:
+        annotations:
+          "karpenter.sh/do-not-disrupt": "true"
+  promExporter:
+    enabled: true
+    podMonitor:
+      enabled: false
+vault-helm: {}
+aws:
+  accountID: "xxx"
+github:
+  token: ""
+keda:
+  enabled: true
+populateWithSampleData:
+  enabled: false
+  fileURL: "https://opengovernance.nyc3.cdn.digitaloceanspaces.com/demo-data/v3.0/demo_data.tar.gz.enc"
+swagger:
+  enabled: false

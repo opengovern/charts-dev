@@ -1,0 +1,88 @@
+{
+  "index_patterns": [
+    "account_report"
+  ],
+  "template": {
+    "settings": {
+      "index": {
+        "max_inner_result_window": 20000,
+        "number_of_shards": 9,
+        "mapping":{
+          "total_fields": {
+            "limit": "10000"
+          }
+        }
+      }
+    },
+    "mappings": {
+      "_source": {
+        "enabled": true
+      },
+      "dynamic": false,
+      "dynamic_templates": [
+        {
+          "strings_as_keyword": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "double": {
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "double",
+              "ignore_malformed": true
+            }
+          }
+        },
+        {
+          "long": {
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long",
+              "ignore_malformed": true
+            }
+          }
+        }
+      ],
+      "properties": {
+        "sourceID": {
+          "type": "keyword"
+        },
+        "provider": {
+          "type": "keyword"
+        },
+        "benchmarkID": {
+          "type": "keyword"
+        },
+        "reportJobID": {
+          "type": "long"
+        },
+        "summary": {
+          "type": "object",
+          "dynamic": true
+        },
+        "createdAt": {
+          "type": "long"
+        },
+        "totalResources": {
+          "type": "long"
+        },
+        "totalCompliant": {
+          "type": "long"
+        },
+        "compliancePercentage": {
+          "type": "double"
+        },
+        "accountReportType": {
+          "type": "keyword"
+        }
+      }
+    }
+  },
+  "_meta": {
+    "description": "Account report index"
+  }
+}

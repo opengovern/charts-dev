@@ -1,0 +1,29 @@
+{{- if eq .Values.swagger.enabled true }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swagger-ui
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: swagger-ui
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: swagger-ui
+  template:
+    metadata:
+      labels:
+        app: swagger-ui
+    spec:
+
+      containers:
+      - name: swagger-ui
+        image: "{{ .Values.opengovernance.docker.registry }}/swagger-ui:{{ .Values.opengovernance.docker.tags.swagger }}"
+        imagePullPolicy: Always
+        env:
+        - name: HTTP_ADDRESS
+          value: "0.0.0.0:7255"
+---
+{{- end }}

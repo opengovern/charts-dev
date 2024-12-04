@@ -1,0 +1,58 @@
+{
+  "index_patterns": [
+    "backup_*"
+  ],
+  "template": {
+    "settings": {
+      "index": {
+        "number_of_shards": 6,
+        "max_inner_result_window": 10000
+      }
+    },
+    "mappings": {
+      "_source": {
+        "enabled": true
+      },
+      "dynamic": true,
+      "dynamic_templates": [
+        {
+          "strings_as_keyword": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "date_as_keyword": {
+            "match_mapping_type": "date",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "double": {
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "double",
+              "ignore_malformed": true
+            }
+          }
+        },
+        {
+          "long": {
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long",
+              "ignore_malformed": true
+            }
+          }
+        }
+      ]
+    }
+  },
+  "_meta": {
+    "description": "This file contains the base index template for all backup indices."
+  }
+}

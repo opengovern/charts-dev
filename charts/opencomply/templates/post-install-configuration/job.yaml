@@ -1,0 +1,1525 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: post-install-configuration
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "0"
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: post-install-configuration
+          image: "{{ .Values.opengovernance.docker.registry }}/post-install-job:{{ .Values.opengovernance.docker.tags.postInstallJob }}"
+          command: ["/post-install-job"]
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: 100m
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          env:
+{{- include "elastic.envs" . | indent 12 }}
+            - name: POSTGRESQL_HOST
+              value: "{{ include "postgres.endpoint" . }}"
+            - name: POSTGRESQL_PORT
+              value: "{{ include "postgres.port" . }}"
+            - name: POSTGRESQL_DB
+              value: "migrator"
+            - name: POSTGRESQL_USERNAME
+              value: "migrator_worker"
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: migratorServiceUserPassword
+            - name: POSTGRESQL_SSLMODE
+              value: "{{ include "postgres.sslMode" . }}"
+            - name: STEAMPIPE_HOST
+              value: steampipe-service.{{ .Release.Namespace }}.svc.cluster.local
+            - name: STEAMPIPE_PORT
+              value: "9193"
+            - name: STEAMPIPE_DB
+              value: "steampipe"
+            - name: STEAMPIPE_USERNAME
+              value: "steampipe"
+            - name: STEAMPIPE_PASSWORD
+              value: "abcd"
+            - name: STEAMPIPE_SSLMODE
+              value: "disable"
+            - name: HTTP_ADDRESS
+              value: "0.0.0.0:6251"
+            - name: ANALYTICS_GIT_URL
+              value: "https://github.com/opengovern/platform-configuration"
+            - name: CONTROL_ENRICHMENT_GIT_URL
+              value: "https://github.com/kaytu-io/control-enrichmentor"
+            - name: METADATA_BASEURL
+              value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
+            - name: GITHUB_TOKEN
+              value: "{{ .Values.github.token }}"
+            - name: PROMETHEUS_PUSH_ADDRESS
+              value: "prom-system-prometheus-pushgateway.prom-system.svc.cluster.local:9091"
+            - name: IS_MANUAL
+              value: "false"
+            - name: JAEGER_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: JAEGER_SERVICE_NAME
+              value: "migrator"
+            - name: DEX_GRPC_ADDRESS
+              value: "opengovernance-dex.{{ .Release.Namespace }}.svc.cluster.local:5557"
+            - name: DEFAULT_DEX_USER_ID
+              value: "08a8684b-db88-4b73-90a9-3cd1661f5466"
+            - name: DEFAULT_DEX_USER_NAME
+              value: "admin"
+            - name: DEFAULT_DEX_USER_EMAIL
+              value: "admin@opencomply.io"
+            - name: DEFAULT_DEX_USER_PASSWORD
+              value: "password"
+
+          volumeMounts:
+            - name: elasticsearch-index-config
+              mountPath: /elasticsearch-index-config
+            - name: inventory-data-config
+              mountPath: /inventory-data-config
+            - name: migrator-config
+              mountPath: /integrations/integration_types.json
+              subPath: integration_types.json
+            - name: migrator-config
+              mountPath: /metadata-migration/metadata.json
+              subPath: metadata.json
+            - name: migrator-config
+              mountPath: /metadata-migration/query_parameters.json
+              subPath: query_parameters.json
+            - name: migrator-config
+              mountPath: /metadata-migration/chat_prompt.txt
+              subPath: chat_prompt.txt
+            - name: migrator-config
+              mountPath: /metadata-migration/main_prompt.txt
+              subPath: main_prompt.txt
+            - name: migrator-config
+              mountPath: /metadata-migration/assets_chat_prompt.txt
+              subPath: assets_chat_prompt.txt
+            - name: migrator-config
+              mountPath: /metadata-migration/assets_main_prompt.txt
+              subPath: assets_main_prompt.txt
+            - name: migrator-config
+              mountPath: /metadata-migration/score_chat_prompt.txt
+              subPath: score_chat_prompt.txt
+            - name: migrator-config
+              mountPath: /metadata-migration/score_main_prompt.txt
+              subPath: score_main_prompt.txt
+            - name: migrator-config
+              mountPath: /metadata-migration/compliance_chat_prompt.txt
+              subPath: compliance_chat_prompt.txt
+            - name: migrator-config
+              mountPath: /metadata-migration/compliance_main_prompt.txt
+              subPath: compliance_main_prompt.txt
+      volumes:
+        - name: elasticsearch-index-config
+          configMap:
+            name: elasticsearch-index-config
+        - name: inventory-data-config
+          configMap:
+            name: inventory-data-config
+        - name: migrator-config
+          configMap:
+            name: migrator-config
+  backoffLimit: 5
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: migrator-config
+  namespace: {{ .Release.Namespace }}
+data:
+  integration_types.json: |
+    [
+      {
+        "id":1,
+        "integration_type": "aws_cloud_account",
+        "name":"AWS",
+        "label":"Amazon Web Services (AWS)",
+        "tier":"Community",
+        "tags": { "usage": ["Public Cloud"] },
+        "auto_onboard_support":true,
+        "short_description":"Get visibility into 500+ cloud assets across regions and accounts.",
+        "description":"Get visibility into 500+ cloud assets across regions and accounts.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/aws.svg"
+      },
+      {
+        "id":2,
+        "integration_type": "azure_subscription",
+        "name":"Azure",
+        "label":"Microsoft Azure",
+        "tier":"Community",
+        "tags": { "usage": ["Public Cloud"] },
+        "auto_onboard_support":true,
+        "short_description":"Inventory 300+ Cloud Assets across assets and Subscriptions",
+        "description":"Inventory 300+ Cloud Assets across assets and Subscriptions",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/azure.svg"
+      },
+      {
+        "id":3,
+        "integration_type": "entraid_directory",
+        "name":"EntraID",
+        "label":"Microsoft EntraID (previously AzureAD)",
+        "tier":"Community",
+        "tags": { "usage": ["Identity Providers"] },
+        "auto_onboard_support":true,
+        "short_description":"Discover Users, Identities, Apps, Service Accounts and 20+ others.",
+        "description":"Discover Users, Identities, Apps, Service Accounts and 20+ others.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/entraid.svg"
+      },
+      {
+        "id":4,
+        "name":"GCP",
+        "label":"Google Cloud (GCP)",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Public Cloud"] },
+        "auto_onboard_support":true,
+        "short_description":"Get visibility into 100+ cloud assets across projects.",
+        "description":"Get visibility into 100+ cloud assets across projects.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/gcp.svg"
+      },
+      {
+        "id": 5,
+        "integration_type": "digitalocean_team",
+        "name": "DigitalOceanCloud",
+        "label": "DigitalOcean",
+        "tier": "Community",
+        "tags": { "usage": ["DevOps", "Cloud", "Containers"] },
+        "auto_onboard_support": true,
+        "short_description": "Gain visibility into DigitalOcean projects and resources.",
+        "description": "Gain comprehensive visibility into DigitalOcean projects and resources, including droplets, databases, networking components, and other cloud infrastructure elements.",
+        "logo": "https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/digitalocean.svg"
+      },
+      {
+        "id":6,
+        "integration_type": "github_account",
+        "name":"GitHubCloud",
+        "label":"GitHub Cloud",
+        "tier":"Community",
+        "tags": { "usage": ["DevOps", "Code Security"] },
+        "auto_onboard_support":true,
+        "short_description":"Gain visibility into Repositories, Deployments, PRs and more.",
+        "description":"Gain visibility into Repositories, Deployments, PRs and more.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/github.svg"
+      },
+      {
+        "id":7,
+        "name":"Cloudflare",
+        "integration_type": "cloudflare_account",
+        "label":"Cloudflare",
+        "tier":"Community",
+        "tags": { "usage": ["Web Security"] },
+        "auto_onboard_support":true,
+        "short_description":"Gain visibility in to Domains, DNS, WAFs, Firewall Rules, Workers and more.",
+        "description":"Gain visibility in to Domains, DNS, WAFs, Firewall Rules, Workers and more.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/cloudflare.svg"
+      },
+      {
+        "id":8,
+        "name":"GitLabCloud",
+        "label":"Gitlab Cloud",
+        "tier":"Enterprise",
+        "tags": { "usage": ["DevOps", "Code Security"] },
+        "auto_onboard_support":true,
+        "short_description":"Gain visibility into Projects, MRs, Issues, repositories and 50+ more",
+        "description":"Gain visibility into Projects, MRs, Issues, repositories and 50+ more",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/gitlab.svg"
+      },
+      {
+        "id":9,
+        "name":"Gitguardian",
+        "label":"Gitguardian",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Code Security"] },
+        "auto_onboard_support":false,
+        "short_description":"With Gitguardian, you can gain visibility to incidents and repos with secret leaks",
+        "description":"With Gitguardian, you can gain visibility to incidents and repos with secret leaks",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/gitguardian.png"
+      },
+      {
+        "id":10,
+        "name":"JIRACloud",
+        "label":"JIRA Cloud",
+        "tier":"Enterprise",
+        "tags": { "usage": ["General"] },
+        "auto_onboard_support":false,
+        "short_description":"Connect to JIRA and gain visibility to tickets, projects, and 10+ more",
+        "description":"Connect to JIRA and gain visibility to tickets, projects, and 10+ more",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/jira.svg"
+      },
+      {
+        "id":11,
+        "name":"ServiceNow",
+        "label":"ServiceNow",
+        "tier":"Enterprise",
+        "tags": { "usage": ["General"] },
+        "auto_onboard_support":true,
+        "short_description":"With ServiceNow, connect CMDBs, Incidents, Tickets, and changes",
+        "description":"With ServiceNow, connect CMDBs, Incidents, Tickets, and changes",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/servicenow.png"
+      },
+      {
+        "id":12,
+        "name":"DatadogInfraMonitoring",
+        "label":"Datadog Infrastructure Monitoring",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Monitoring"] },
+        "auto_onboard_support":false,
+        "short_description":"Discover Hosts, VMs, Networks, Tanzu Kubernetes Grid and More",
+        "description":"Discover Hosts, VMs, Networks, Tanzu Kubernetes Grid and More",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/datadog.svg"
+      },
+      {
+        "id":13,
+        "name":"PrismaCloud",
+        "label":"Palo Alto (Prisma) Cloud Security",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Cloud Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Track Cloud security issues.",
+        "description":"Track Cloud security issues.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/pan.svg"
+      },
+      {
+        "id":14,
+        "name":"AnsibleTower",
+        "label":"Ansible Tower",
+        "tier":"Enterprise",
+        "tags": { "usage": ["General"] },
+        "auto_onboard_support":false,
+        "short_description":"Discover Inventory, Playbooks, Jobs and more.",
+        "description":"Discover Inventory, Playbooks, Jobs and more.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/ansible.svg"
+      },
+      {
+        "id":15,
+        "name":"ChainguardDev",
+        "label":"chainguard.dev",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Containers"] },
+        "auto_onboard_support":false,
+        "short_description":"Inventory Registries, Vulnerabilities, and reports.",
+        "description":"Inventory Registries, Vulnerabilities, and reports.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/chainguard.svg"
+      },
+      {
+        "id":16,
+        "name":"Snyk",
+        "label":"Snyk",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Code Security", "Application Security", "Containers"] },
+        "auto_onboard_support":true,
+        "short_description":"Gain visibility into Snyk's SAST & SCA capabilities.",
+        "description":"Gain visibility into Snyk's SAST & SCA capabilities.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/snyk.svg"
+      },
+      {
+        "id":17,
+        "name":"Okta",
+        "label":"Okta",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Identity Providers", "Identity Security"] },
+        "auto_onboard_support":true,
+        "short_description":"Discover Okta Users & Identities.",
+        "description":"Discover Okta Users & Identities.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/okta.svg"
+      },
+      {
+        "id":18,
+        "name":"SonatypeNexus",
+        "label":"Sonatype Nexus Repository",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Code Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Discover binaries and build artifacts across your software supply chain.",
+        "description":"Discover binaries and build artifacts across your software supply chain.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/sonatype-nexus.svg"
+      },
+      {
+        "id":19,
+        "name":"CustomWebhook",
+        "label":"Custom Webhook",
+        "tier":"Enterprise",
+        "tags": { "usage": ["General"] },
+        "auto_onboard_support":false,
+        "short_description":"Trigger events, flows, based on compliance policies & events.",
+        "description":"Trigger events, flows, based on compliance policies & events.",
+        "logo":""
+      },
+      {
+        "id":21,
+        "name":"Checkmarx",
+        "label":"Checkmarx",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Application Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Track DAST Scan Results, Projects, Risks and more",
+        "description":"Track DAST Scan Results, Projects, Risks and more",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/checkmarkx.svg"
+      },
+      {
+        "id":22,
+        "name":"AzureDevOps",
+        "label":"Azure DevOps Cloud",
+        "tier":"Enterprise",
+        "tags": { "usage": ["DevOps"] },
+        "auto_onboard_support":true,
+        "short_description":"Discover Projects, Repositories, Issues, Deployment Artifacts, Merge Requests and more",
+        "description":"Discover Projects, Repositories, Issues, Deployment Artifacts, Merge Requests and more",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/azure-devops.svg"
+      },
+      {
+        "id":23,
+        "name":"BlackduckSCA",
+        "label":"Blackduck SCA",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Code Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Track security, quality, and license compliance risks from projects.",
+        "description":"Track security, quality, and license compliance risks from projects.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/synopsys.svg"
+      },
+      {
+        "id":24,
+        "name":"CrowdStrikeFalcon",
+        "label":"CrowdStrike Falcon",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Endpoint Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Tracks Hosts, devices, and associated vulnerabilities",
+        "description":"Tracks Hosts, devices, and associated vulnerabilities",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/crowdstrike-falcon.svg"
+      },
+      {
+        "id":25,
+        "name":"DefenderEndpoints",
+        "label":"Microsoft Defender - Endpoints",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Endpoint Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Inventory devices, alerts, scores, alerts, and more",
+        "description":"Inventory devices, alerts, scores, alerts, and more",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/microsoft-defender.svg"
+      },
+      {
+        "id":26,
+        "name":"MicrosoftIntune",
+        "label":"Microsoft Intune",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Device Management"] },
+        "auto_onboard_support":false,
+        "short_description":"Track devices, policies, protection status and more.",
+        "description":"Track devices, policies, protection status and more.",
+        "logo":""
+      },
+      {
+        "id":27,
+        "name":"InvictiEnterprise",
+        "label":"invicti Enterprise",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Web Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Invicti Cloud API integration discovers agents, accounts, issues, scans and vulnerabilities.",
+        "description":"Invicti Cloud API integration discovers agents, accounts, issues, scans and vulnerabilities.",
+        "logo":""
+      },
+      {
+        "id":28,
+        "name":"VMWarePrivateCloud",
+        "label":"VMWare vSphere",
+        "tier":"Enterprise",
+        "tags": { "usage": ["General"] },
+        "auto_onboard_support":false,
+        "short_description":"Discover Hosts, VMs, Networks, Tanzu Kubernetes Grid and More",
+        "description":"Discover Hosts, VMs, Networks, Tanzu Kubernetes Grid and More",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/vmware.svg"
+      },
+      {
+        "id":29,
+        "name":"Rubrik",
+        "label":"Rubrik",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Data Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Discover protects Hosts, Clusters, and Databases",
+        "description":"Discover protects Hosts, Clusters, and Databases",
+        "logo":""
+      },
+
+      {
+        "id": 31,
+        "name": "CommVault",
+        "label": "CommVault",
+        "tier": "Enterprise",
+        "tags": { "usage": ["Data Security"] },
+        "auto_onboard_support": false,
+        "short_description": "Track Protected/goverances Databases, File Shares, and more.",
+        "description": "Track Protected/goverances Databases, File Shares, and more.",
+        "logo": ""
+      },
+      {
+        "id": 32,
+        "name": "BitBucketCloud",
+        "label": "BitBucket Cloud",
+        "tier": "Enterprise",
+        "tags": { "usage": [
+          "DevOps",
+          "Other"
+        ]},
+        "auto_onboard_support": false,
+        "short_description": "Discover Code Repos, Pipelines, Runners, Pull requests and more",
+        "description": "Discover Code Repos, Pipelines, Runners, Pull requests and more",
+        "logo": "https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/bitbucket.svg"
+      },
+      {
+        "id": 33,
+        "name": "Veracode",
+        "label": "Veracode",
+        "tier": "Enterprise",
+        "tags": { "usage": ["Code Security"] },
+        "auto_onboard_support": false,
+        "short_description": "Inventory goverend repos, scans, findings and more.",
+        "description": "Inventory goverend repos, scans, findings and more.",
+        "logo": ""
+      },
+      {
+        "id": 34,
+        "name": "SplunkES",
+        "label": "Splunk Enterprise Security",
+        "tier": "Enterprise",
+        "tags": { "usage": ["Cloud Security"] },
+        "auto_onboard_support": false,
+        "short_description": "With Splunk Enterprise API, get insights in to workloads, apps, and threats.",
+        "description": "With Splunk Enterprise API, get insights in to workloads, apps, and threats.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/cisco.svg"
+      },
+      {
+        "id": 35,
+        "name": "MicrosoftSentinel",
+        "label": "Microsoft Sentinel",
+        "tier": "Enterprise",
+        "tags": { "usage": ["SIEM"] },
+        "auto_onboard_support": false,
+        "short_description": "Discover Alert, Incidents, Entities, and more",
+        "description": "Discover Alert, Incidents, Entities, and more",
+        "logo": ""
+      },
+      {
+        "id": 36,
+        "name": "Godaddy",
+        "label": "Godaddy",
+        "tier": "Enterprise",
+        "tags": { "usage": ["General"] },
+        "auto_onboard_support": false,
+        "short_description": "Discover Certificates, domains, status more",
+        "description": "Discover Certificates, domains, status more",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/godaddy.svg"
+      },
+      {
+        "id": 37,
+        "name": "Rapid7InsightIDR",
+        "label": "Rapid7 InsightIDR (SIEM)",
+        "tier": "Enterprise",
+        "tags": { "usage": ["SIEM"] },
+        "auto_onboard_support": false,
+        "short_description": "Discover assets, alerts, assets, configuration",
+        "description": "Discover assets, alerts, assets, configuration",
+        "logo": ""
+      },
+      {
+        "id": 38,
+        "name": "DatadogCloudSIEM",
+        "label": "Datadog Cloud SIEM",
+        "tier": "Enterprise",
+        "tags": {"usage": [
+          "Cloud Security",
+          "SIEM"
+        ]},
+        "auto_onboard_support": false,
+        "short_description": "Discover security threats in cloud environments.",
+        "description": "Discover security threats in cloud environments.",
+        "logo": "https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/datadog.svg"
+      },
+      {
+        "id": 39,
+        "name": "GoogleWorkspaces",
+        "label": "Google Workspaces",
+        "tier": "Enterprise",
+        "tags": {"usage": [
+          "Identity Providers",
+          "Identity Security"
+        ]},
+        "auto_onboard_support": false,
+        "short_description": "Inventory and govern Identities, Users, and Groups",
+        "description": "Inventory and govern Identities, Users, and Groups",
+        "logo": "https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/gcp.svg"
+      },
+      {
+        "id":40,
+        "name":"Wiz",
+        "label":"Wiz.io",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Cloud Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Cloud Events, Alerts, and others",
+        "description":"Cloud Events, Alerts, and others",
+        "logo":""
+      },
+      {
+        "id":41,
+        "name":"Snowflake",
+        "label":"Snowflake",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Data Clouds"] },
+        "auto_onboard_support":false,
+        "short_description":"Discover Databases, Tables, and more",
+        "description":"Discover Databases, Tables, and more",
+        "logo":""
+      },
+      {
+        "id":42,
+        "name":"IntruderIO",
+        "label":"intruder.io",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Web Security", "Application Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Discover Vulnerabilities for network",
+        "description":"Discover Vulnerabilities for network",
+        "logo":""
+      },
+      {
+        "id":43,
+        "name":"CobaltIO",
+        "label":"Cobalt.io",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Web Security"] },
+        "auto_onboard_support":false,
+        "short_description":"See Assets, Findings, Scans, and Events",
+        "description":"See Assets, Findings, Scans, and Events",
+        "logo":""
+      },
+      {
+        "id":44,
+        "name":"AppDynamicsSaaS",
+        "label":"Cisco AppDynamics (SaaS)",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Monitoring", "DevOps"] },
+        "auto_onboard_support":false,
+        "short_description":"Inventory, Apps, nodes, Tiers, Health Rules and more",
+        "description":"Inventory, Apps, nodes, Tiers, Health Rules and more",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/cisco.svg"
+      },
+      {
+        "id":45,
+        "name":"CiscoDuo",
+        "label":"Cisco Duo",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Identity Providers", "Identity Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Track MFA, Identities, Policies and more",
+        "description":"Track MFA, Identities, Policies and more",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/cisco.svg"
+      },
+      {
+        "id":46,
+        "name":"CiscoMeraki",
+        "label":"Cisco Meraki",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Network Management"] },
+        "auto_onboard_support":false,
+        "short_description":"Inventory Networks, Gateways, Radios, and more",
+        "description":"Inventory Networks, Gateways, Radios, and more",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/cisco.svg"
+      },
+      {
+        "id":47,
+        "name":"Jamf",
+        "label":"Jamf",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Device Management"] },
+        "auto_onboard_support":false,
+        "short_description":"See Devices, Configurations, Policies, and more",
+        "description":"See Devices, Configurations, Policies, and more",
+        "logo":""
+      },
+      {
+        "id":48,
+        "name":"CyberArkPAM",
+        "label":"CyberArk Privileged Access Manager",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Identity Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Inventory accounts, systems, requests, and sessions.",
+        "description":"Inventory accounts, systems, requests, and sessions.",
+        "logo":""
+      },
+      {
+        "id":49,
+        "name":"SonarQube",
+        "label":"SonarQube",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Code Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Discover applications, Issuess, code repos",
+        "description":"Discover applications, Issuess, code repos",
+        "logo":""
+      },
+      {
+        "id":50,
+        "name":"CarbonBlackXDR",
+        "label":"Carbon Black Cloud EDR",
+        "tier":"Enterprise",
+        "tags": { "usage": ["Endpoint Security"] },
+        "auto_onboard_support":false,
+        "short_description":"Track Threat Reports, Fees, and Alerts",
+        "description":"Track Threat Reports, Fees, and Alerts",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/vmware.svg"
+      },
+      {
+        "id":51,
+        "name":"KubernetesCluster",
+        "label":"Kubernetes",
+        "tier":"Enterprise",
+        "tags": { "usage": ["DevOps", "Containers"] },
+        "auto_onboard_support":true,
+        "short_description":"Gain visibility into Kubernetes objects.",
+        "description":"Gain visibility into Kubernetes objects.",
+        "logo":"https://raw.githubusercontent.com/opengovern/website/main/connectors/icons/kubernetes.svg"
+      }
+    ]
+
+  metadata.json: |
+    [
+      {"key": "workspace_date_time_format", "type": "string", "value": "1900-01-02"},
+      {"key": "workspace_debug_mode", "type": "bool", "value": "FALSE"},
+      {"key": "workspace_time_window", "type": "string", "value": "30d"},
+      {"key": "asset_management_enabled", "type": "bool", "value": "TRUE"},
+      {"key": "compliance_enabled", "type": "bool", "value": "TRUE"},
+      {"key": "product_management_enabled", "type": "bool", "value": "TRUE"},
+      {"key": "allow_invite", "type": "bool", "value": "TRUE"},
+      {"key": "workspace_key_support", "type": "bool", "value": "TRUE"},
+      {"key": "workspace_max_keys", "type": "int", "value": "3"},
+      {"key": "allowed_email_domains", "type": "string", "value": ""},
+      {"key": "auto_discovery_method", "type": "string", "value": "scheduled"},
+      {"key": "full_discovery_job_interval", "type": "int", "value": "48"},
+      {"key": "cost_discovery_job_interval", "type": "int", "value": "24"},
+      {"key": "describe_job_interval", "type": "int", "value": "8"},
+      {"key": "health_check_job_interval", "type": "int", "value": "60"},
+      {"key": "insight_job_interval", "type": "int", "value": "2"},
+      {"key": "metrics_job_interval", "type": "int", "value": "2"},
+      {"key": "compliance_job_interval", "type": "int", "value": "24"},
+      {"key": "data_retention_duration", "type": "int", "value": "366"},
+      {"key": "connection_limit", "type": "int", "value": "1000"},
+      {"key": "user_limit", "type": "int", "value": "1000"},
+      {"key": "analytics_git_url", "type": "string", "value": "https://github.com/opengovern/platform-configuration/archive/refs/tags/v1.0.0.zip"},
+      {"key": "asset_discovery_aws_policy_arns", "type": "string", "value": "arn:aws:iam::aws:policy/SecurityAudit,arn:aws:iam::aws:policy/ReadOnlyAccess"},
+      {"key": "spend_discovery_aws_policy_arns", "type": "string", "value": "arn:aws:iam::aws:policy/AWSBillingReadOnlyAccess"},
+      {"key": "asset_discovery_azure_role_ids", "type": "string", "value": "/subscriptions/%s/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7"},
+      {"key": "spend_discovery_azure_role_ids", "type": "string", "value": "/subscriptions/%s/providers/Microsoft.Authorization/roleDefinitions/fa23ad8b-c56e-40d8-ac0c-ce449e1d2c64"},
+      {"key": "spend_discovery_azure_role_ids", "type": "string", "value": "/subscriptions/%s/providers/Microsoft.Authorization/roleDefinitions/fa23ad8b-c56e-40d8-ac0c-ce449e1d2c64"},
+      {"key": "aws_discovery_required_only", "type": "bool", "value": "true"},
+      {"key": "azure_discovery_required_only", "type": "bool", "value": "true"},
+      {"key": "asset_discovery_enabled", "type": "bool", "value": "true"},
+      {"key": "spend_discovery_enabled", "type": "bool", "value": "true"},
+      {"key": "customization_enabled", "type": "bool", "value": "true"}
+    ]
+
+  chat_prompt.txt: |
+    Prompt
+
+  main_prompt.txt: |
+    Prompt
+
+  assets_chat_prompt.txt: |
+    Prompt
+
+  assets_main_prompt.txt: |
+    Prompt
+
+  score_chat_prompt.txt: |
+    TODO
+  score_main_prompt.txt: |
+    Prompt
+
+  compliance_chat_prompt.txt: |
+    Prompt
+
+  compliance_main_prompt.txt: |
+    Prompt
+
+  query_parameters.json: |
+    [
+      {
+        "key": "azureAppTierTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureAllowedVmSizes",
+        "value": ""
+      },
+      {
+        "key": "awsIamUserKeyRotateDays",
+        "value": "30"
+      },
+      {
+        "key": "awsTrustedEndpoints",
+        "value": ""
+      },
+      {
+        "key": "awsNetBiosTrustedIpRange",
+        "value": ""
+      },
+      {
+        "key": "azureStorageBlobSoftDeleteSufficientDays",
+        "value": "1"
+      },
+      {
+        "key": "awsRdsBaselineRestorableTimeInHrs",
+        "value": "1"
+      },
+      {
+        "key": "awsRdsInstanceDesiredClasses",
+        "value": ""
+      },
+      {
+        "key": "azureDatabaseTierTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEbsInstancesBackupPeriod",
+        "value": "24"
+      },
+      {
+        "key": "awsEbsAmiAgeMaxDays",
+        "value": "30"
+      },
+      {
+        "key": "azureSufficientDaysBeforeCertificateExpiry",
+        "value": "30"
+      },
+      {
+        "key": "awsBackupResourceTypeOptInPreference",
+        "value": "{}"
+      },
+      {
+        "key": "azureCmkSecretExpireDays",
+        "value": "30"
+      },
+      {
+        "key": "awsRdsBaselineRetentionPeriodDays",
+        "value": "30"
+      },
+      {
+        "key": "awsEcsContainerInstanceAgentVersion",
+        "value": "1.0.0"
+      },
+      {
+        "key": "awsSmtpTrustedIpRange",
+        "value": ""
+      },
+      {
+        "key": "awsBackupPlanMoveToColdStorageAfterDays",
+        "value": "10"
+      },
+      {
+        "key": "awsEksClusterLatestVersion",
+        "value": "1.29"
+      },
+      {
+        "key": "awsApprovedPermissionSets",
+        "value": ""
+      },
+      {
+        "key": "azureKubernetesLatestVersion",
+        "value": "1.29"
+      },
+      {
+        "key": "azureWebTierTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsSshPublicKeyRotateDays",
+        "value": "30"
+      },
+      {
+        "key": "awsMysqlTrustedIpRange",
+        "value": ""
+      },
+      {
+        "key": "awsAppTierTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsMongodbTrustedIpRange",
+        "value": ""
+      },
+      {
+        "key": "awsOracleTrustedIpRange",
+        "value": ""
+      },
+      {
+        "key": "awsLatestPolicies",
+        "value": ""
+      },
+      {
+        "key": "awsBackupPlanDeleteAfterDays",
+        "value": "30"
+      },
+      {
+        "key": "awsMssqlTrustedIpRange",
+        "value": ""
+      },
+      {
+        "key": "azureadClientSecretExpireDays",
+        "value": "30"
+      },
+      {
+        "key": "awsOpensearchTrustedIpRange",
+        "value": ""
+      },
+      {
+        "key": "awsIamUsersAuthorizedToEditPolicy",
+        "value": ""
+      },
+      {
+        "key": "azureLatestTlsVersion",
+        "value": "1.3"
+      },
+      {
+        "key": "azureAllowedVmExtentions",
+        "value": ""
+      },
+      {
+        "key": "azureSufficientDailyBackupRetention",
+        "value": "1"
+      },
+      {
+        "key": "awsCifsTrustedIpRange",
+        "value": "1.4.0"
+      },
+      {
+        "key": "awsEcsServicePlatformVersion",
+        "value": "1.4.0"
+      },
+      {
+        "key": "awsIamUserPasswordExpirationDays",
+        "value": "30"
+      },
+      {
+        "key": "awsEbsSnapshotAgeMaxDays",
+        "value": "30"
+      },
+      {
+        "key": "azureComputeSnapshotAgeMaxDays",
+        "value": "30"
+      },
+      {
+        "key": "azureAksLatestVersion",
+        "value": "1.28.5"
+      },
+      {
+        "key": "awsOpensearchLatestVersion",
+        "value": "OpenSearch_2.11"
+      },
+      {
+        "key": "awsWebTierTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEc2InstanceValidInstanceTypes",
+        "value": "[]"
+      },
+      {
+        "key": "azureDatabaseServerRetentionPeriodDays",
+        "value": "30"
+      },
+      {
+        "key": "awsIcmpTrustedIpRange",
+        "value": "[]"
+      },
+      {
+        "key": "awsApprovedIamUsers",
+        "value": "[]"
+      },
+      {
+        "key": "awsIamServerCertificateAge",
+        "value": "90"
+      },
+      {
+        "key": "awsIamAccessKeyAge",
+        "value": "90"
+      },
+      {
+        "key": "awsRpcTrustedIpRange",
+        "value": "[]"
+      },
+      {
+        "key":"awsUnapprovedIamPolicies",
+        "value": "[]"
+      },
+      {
+        "key": "azureAllowedKeyTypes",
+        "value": "[]"
+      },
+      {
+        "key": "azureRsaCertificateMinSize",
+        "value": "2048"
+      },
+      {
+        "key": "azureStorageAccountAllowedIPAddresses",
+        "value": "[]"
+      },
+      {
+        "key": "azureKeyVaultKeyExpirationDateDays",
+        "value": "30"
+      },
+      {
+        "key": "azureDiskSnapshotAgeThreshold",
+        "value": "30"
+      },
+      {
+        "key": "azureSufficientInstantRestoreRetention",
+        "value": "30"
+      },
+      {
+        "key": "kaytuMoMCostGrowthMinCost",
+        "value": "100"
+      },
+      {
+        "key": "kaytuMoMCostGrowthAllowedGrowth",
+        "value": "0.15"
+      },
+      {
+        "key": "kaytuConnectionMoMCostGrowthMinCost",
+        "value": "1000"
+      },
+      {
+        "key": "kaytuConnectionMoMCostGrowthAllowedGrowth",
+        "value": "0.25"
+      },
+      {
+        "key": "awsAccessanalyzerAnalyzerMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsApiGatewayStageMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsCloudfrontDistributionMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsCloudtrailTrailMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsCloudwatchAlarmMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsCloudwatchLogGroupMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsCodebuildProjectMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsCodecommitRepositoryMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsCodepipelinePipelineMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsConfigRuleMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsDaxClusterMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsDirectoryServiceDirectoryMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsDmsReplicationInstanceMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsDynamodbTableMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEbsSnapshotMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEbsVolumeMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEc2ApplicationLoadBalancerMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEc2ClassicLoadBalancerMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEc2GatewayLoadBalancerMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEc2InstanceMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEc2NetworkLoadBalancerMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEc2ReservedInstanceMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEcrRepositoryMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEcsContainerInstanceMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEcsServiceMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEfsFileSystemMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEksAddonMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEksClusterMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEksIdentityProviderConfigMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsElasticBeanstalkApplicationMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsElasticBeanstalkEnvironmentMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsElasticacheClusterMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsElasticsearchDomainMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsEventbridgeRuleMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsGuarddutyDetectorMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsIamRoleMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsIamServerCertificateMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsIamUserMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsInspectorAssessmentTemplateMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsKinesisFirehoseDeliveryStreamMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsKmsKeyMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsLambdaFunctionMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsRdsDbClusterMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsRdsDbClusterParameterGroupMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsRdsDbClusterSnapshotMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsRdsDbInstanceMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsRdsDbOptionGroupMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsRdsDbParameterGroupMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsRdsDbSnapshotMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsRdsDbSubnetGroupMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsRedshiftClusterMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsRoute53DomainMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsRoute53ResolverEndpointMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsS3BucketMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsSagemakerEndpointConfigurationMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsSagemakerModelMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsSagemakerNotebookInstanceMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsSagemakerTrainingJobMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsSecretsmanagerSecretMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsSsmParameterMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsVpcEipMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsVpcMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsVpcNatGatewayMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsVpcNetworkAclMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsVpcSecurityGroupMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsVpcVpnConnectionMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsWafv2IpSetMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsWafv2RegexPatternSetMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsWafv2RuleGroupMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "awsWafv2WebAclMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureApiManagementMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureAppServiceEnvironmentMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureAppServiceFunctionAppMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureAppServicePlanMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureAppServiceWebAppMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureApplicationSecurityGroupMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureBatchAccountMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureComputeAvailabilitySetMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureComputeDiskEncryptionSetMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureComputeDiskMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureComputeImageMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureComputeSnapshotMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureComputeVirtualMachineMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureComputeVirtualMachineScaleSetMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureContainerRegistryMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureCosmosdbAccountMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureCosmosdbMongoDatabaseMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureCosmosdbSqlDatabaseMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureDataFactoryMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureDataLakeAnalyticsAccountMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureDataLakeStoreMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureEventhubNamespaceMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureExpressRouteCircuitMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureFirewallMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureIothubMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureKeyVaultDeletedVaultMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureKeyVaultKeyMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureKeyVaultManagedHardwareSecurityModuleMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureKeyVaultMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureKeyVaultSecretMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureKubernetesClusterMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureLbMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureLogAlertMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureLogProfileMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureLogicAppWorkflowMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureMariadbServerMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureMssqlElasticpoolMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureMssqlManagedInstanceMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureMysqlServerMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureNetworkInterfaceMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureNetworkSecurityGroupMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureNetworkWatcherFlowLogMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureNetworkWatcherMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azurePostgresqlServerMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azurePublicIpMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureRecoveryServicesVaultMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureRedisCacheMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureRouteTableMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureSearchServiceMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureServicebusNamespaceMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureSqlDatabaseMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureSqlServerMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureStorageAccountMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureStreamAnalyticsJobMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureVirtualNetworkGatewayMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureVirtualNetworkMandatoryTags",
+        "value": "{}"
+      },
+      {
+        "key": "azureSubscriptionMandatoryTags",
+        "value": "{}"
+      }
+    ]
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inventory-data-config
+  namespace: {{ .Release.Namespace }}
+data:
+  {{- (.Files.Glob "inventory-data/*").AsConfig | nindent 2 }}

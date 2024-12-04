@@ -1,0 +1,87 @@
+{
+  "index_patterns": [
+    "analytics_connection_summary",
+    "rc_analytics_connection_summary"
+  ],
+  "template": {
+    "mappings": {
+      "_source": {
+        "enabled": true
+      },
+      "dynamic": true,
+      "dynamic_templates": [
+        {
+          "strings_as_keyword": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "double": {
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "double",
+              "ignore_malformed": true
+            }
+          }
+        },
+        {
+          "long": {
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long",
+              "ignore_malformed": true
+            }
+          }
+        }
+      ],
+      "properties": {
+        "evaluated_at": {
+          "type": "long"
+        },
+        "metric_id": {
+          "type": "keyword"
+        },
+        "metric_name": {
+          "type": "keyword"
+        },
+        "date": {
+          "type": "keyword"
+        },
+        "month": {
+          "type": "keyword"
+        },
+        "year": {
+          "type": "keyword"
+        },
+
+        "integrations": {
+          "type": "object",
+          "enabled": false
+        },
+
+        "resource_collections": {
+          "type": "object",
+          "enabled": false
+        }
+      }
+    },
+    "settings": {
+      "index":{
+        "max_inner_result_window": 20000,
+        "refresh_interval": "60s",
+        "number_of_shards": 9,
+        "mapping":{
+          "total_fields": {
+            "limit": "10000"
+          }
+        }
+      }
+    }
+  },
+  "_meta": {
+    "description": "Analytics Connection Summary Index"
+  }
+}

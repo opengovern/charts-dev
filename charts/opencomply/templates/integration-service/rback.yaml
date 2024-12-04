@@ -1,0 +1,58 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-make-describers-access
+rules:
+  - apiGroups:
+      - "keda.sh/v1alpha1"
+    resources:
+      - "scaledobject"
+    verbs:
+      - "get"
+      - "list"
+      - "create"
+      - "delete"
+      - "update"
+  - apiGroups:
+      - "keda.sh"
+    resources:
+      - "scaledobjects"
+    verbs:
+      - "get"
+      - "list"
+      - "create"
+      - "delete"
+      - "update"
+  - apiGroups:
+      - "apps"
+    resources:
+      - "deployments"
+    verbs:
+      - "get"
+      - "list"
+      - "create"
+      - "delete"
+      - "update"
+  - apiGroups:
+      - ""
+    resources:
+      - "pods"
+    verbs:
+      - "get"
+      - "list"
+      - "create"
+      - "delete"
+      - "update"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}-make-describers-access
+subjects:
+  - kind: ServiceAccount
+    name: integration
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ .Release.Name }}-make-describers-access
+  apiGroup: rbac.authorization.k8s.io

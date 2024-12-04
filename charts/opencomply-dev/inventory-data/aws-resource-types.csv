@@ -1,0 +1,51 @@
+AWS Resource Name,ARN,Steampipe Table,Category
+AWS Account,AWS::Account::Account,aws_account,Management & Governance
+Kubernetes Cluster,AWS::EKS::Cluster,aws_eks_cluster,Compute
+FSX File System,AWS::FSX::FileSystem,aws_fsx_file_system,Storage
+IAM User,AWS::IAM::User,aws_iam_user,Identity & Access Management
+Lambda Function,AWS::Lambda::Function,aws_lambda_function,Compute
+RDS DB Instance,AWS::RDS::DBInstance,aws_rds_db_instance,Database
+Redshift Cluster,AWS::Redshift::Cluster,aws_redshift_cluster,Database
+S3 Bucket,AWS::S3::Bucket,aws_s3_bucket,Storage
+TLS/SSL Certificate,AWS::CertificateManager::Certificate,aws_acm_certificate,Security
+Backup Plan,AWS::Backup::Plan,aws_backup_plan,Management & Governance
+EC2 Server,AWS::EC2::Instance,aws_ec2_instance,Compute
+VPC (Virtual Network),AWS::EC2::VPC,aws_vpc,Networking
+EC2 Image (AMI),AWS::EC2::Image,aws_ec2_ami,Storage
+Storage Snapshot,AWS::EC2::Snapshot,aws_ec2_snapshot,Storage
+Storage Volumes,AWS::EC2::Volume,aws_ec2_volume,Storage
+ECS Cluster,AWS::ECS::Cluster,aws_ecs_cluster,Compute
+Autoscaling Group,AWS::AutoScaling::AutoScalingGroup,aws_autoscaling_group,Compute
+Batch Job,AWS::Batch::Job,aws_batch_job,Compute
+CloudFormation Stack,AWS::CloudFormation::Stack,aws_cloudformation_stack,Management & Governance
+CloudFront Distribution,AWS::CloudFront::Distribution,aws_cloudfront_distribution,Networking & Content Delivery
+CloudTrail,AWS::CloudTrail::Trail,aws_cloudtrail_trail,Management & Governance
+Connection,AWS::DirectConnect::Connection,aws_directconnect_connection,Networking
+DynamoDB Index,AWS::DynamoDb::LocalSecondaryIndex,aws_dynamodb_index,Database
+DynamoDB Table,AWS::DynamoDb::Table,aws_dynamodb_table,Database
+Elastic (Public) IP,AWS::EC2::EIP,aws_ec2_eip,Networking
+Internet Gateway,AWS::EC2::InternetGateway,aws_ec2_internet_gateway,Networking
+NAT Gateway,AWS::EC2::NatGateway,aws_ec2_nat_gateway,Networking
+Route Table,AWS::EC2::RouteTable,aws_ec2_route_table,Networking
+Subnet,AWS::EC2::Subnet,aws_ec2_subnet,Networking
+Transit Gateway,AWS::EC2::TransitGateway,aws_ec2_transit_gateway,Networking
+Network ACL,AWS::EC2::NetworkAcl,aws_ec2_network_acl,Networking
+EC2 Network Security Group,AWS::EC2::SecurityGroup,aws_ec2_security_group,Security
+Container Repository,AWS::ECR::Repository,aws_ecr_repository,Networking & Content Delivery
+ECS Service,AWS::ECS::Service,aws_ecs_service,Compute
+ElasticCache Cluster,AWS::ElastiCache::Cluster,aws_elasticache_cluster,Database
+Elastic BeanStalk Application,AWS::ElasticBeanstalk::Application,aws_elasticbeanstalk_application,Compute
+EFS File System,AWS::EFS::FileSystem,aws_efs_file_system,Storage
+Elastic Load Balancer,AWS::ElasticLoadBalancing::LoadBalancer,aws_elb_load_balancer,Networking
+Application Load Balancer,AWS::ElasticLoadBalancing::LoadBalancer,aws_elbv2_load_balancer,Networking
+Network Load Balancer,AWS::ElasticLoadBalancing::LoadBalancer,aws_elbv2_load_balancer,Networking
+Cluster,AWS::EMR::Cluster,aws_emr_cluster,Analytics & Big Data
+IAM Group,AWS::IAM::Group,aws_iam_group,Identity & Access Management
+IAM Policy,AWS::IAM::Policy,aws_iam_policy,Identity & Access Management
+IAM Role,AWS::IAM::Role,aws_iam_role,Identity & Access Management
+Kinesis Stream,AWS::Kinesis::Stream,aws_kinesis_stream,Analytics & Big Data
+Cryptographic Keys,AWS::KMS::Key,aws_kms_key,Security
+MemoryDB Cluster,AWS::MemoryDb::Cluster,aws_memorydb_cluster,Database
+AWS Firewall,AWS::NetworkFirewall::Firewall,aws_networkfirewall_firewall,Security
+Organization,AWS::Organizations::Organization,aws_organizations_organization,Management & Governance
+Database Cluster,AWS::RDS::DBCluster,aws_rds_db_cluster,Database

@@ -1,0 +1,82 @@
+{{- if eq .Values.queryvalidator.enabled true }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: query-validator-worker
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: query-validator-worker
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: query-validator-worker
+  template:
+    metadata:
+      labels:
+        app: query-validator-worker
+    spec:
+      containers:
+        - name: query-validator-worker
+          image: "{{ .Values.opengovernance.docker.registry }}/query-validator-job:{{ .Values.opengovernance.docker.tags.queryValidatorJob }}"
+          command: ["/query-validator-job"]
+          args:
+            - --id=$(WORKER_ID)
+          imagePullPolicy: Always
+          #resources:
+          #  limits:
+          #    cpu: 500m
+          #    memory: 1Gi
+          #  requests:
+          #    cpu: 500m
+          #    memory: 100Mi
+          env:
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: steampipeUserPassword
+            - name: METADATA_DB_HOST
+              value: "{{ include "postgres.endpoint" . }}"
+            - name: METADATA_DB_PORT
+              value: "{{ include "postgres.port" . }}"
+            - name: METADATA_DB_SSL_MODE
+              value: "{{ include "postgres.sslMode" . }}"
+            - name: STEAMPIPE_LOG_LEVEL
+              value: "WARN"
+            - name: STEAMPIPE_MAX_PARALLEL
+              value: "50"
+            - name: STEAMPIPE_CACHE
+              value: "false"
+            - name: STEAMPIPE_UPDATE_CHECK
+              value: "false"
+            - name: NATS_URL
+              value: "{{ .Release.Name }}-nats.{{ .Release.Namespace }}.svc.cluster.local:4222"
+{{- include "elastic.envs" . | indent 12 }}
+            - name: COMPLIANCE_BASEURL
+              value: "http://compliance-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
+            - name: SCHEDULER_BASEURL
+              value: "http://describe-scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
+            - name: INVENTORY_BASEURL
+              value: "http://inventory-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
+            - name: METADATA_BASEURL
+              value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
+            - name: ESSINK_BASEURL
+              value: "http://es-sink-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
+            - name: PENNYWISE_BASE_URL
+              value: "http://pennywise-server-service.kaytu-octopus.svc.cluster.local:8080"
+
+            - name: PROMETHEUS_PUSH_ADDRESS
+              value: "prom-system-prometheus-pushgateway.prom-system.svc.cluster.local:9091"
+
+            - name: JAEGER_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: JAEGER_SERVICE_NAME
+              value: "query-runner-worker"
+            - name: JAEGER_SAMPLE_RATE
+              value: "0.0005"
+---
+{{- end }}

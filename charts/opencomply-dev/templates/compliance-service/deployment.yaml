@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compliance-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: compliance-service
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: compliance-service
+  template:
+    metadata:
+      labels:
+        app: compliance-service
+    spec:
+      serviceAccountName: compliance
+      containers:
+      - name: compliance-service
+        image: "{{ .Values.opengovernance.docker.registry }}/compliance-service:{{ .Values.opengovernance.docker.tags.compliance }}"
+        command: ["/compliance-service"]
+        imagePullPolicy: Always
+        #resources:
+        #  limits:
+        #    cpu: 1000m
+        #    memory: 3Gi
+        #  requests:
+        #    cpu: 200m
+        #    memory: 500Mi
+        env:
+{{- include "elastic.envs" . | indent 8 }}
+        - name: CURRENT_NAMESPACE
+          value: "{{ .Release.Namespace }}"
+        - name: POSTGRESQL_HOST
+          value: "{{ include "postgres.endpoint" . }}"
+
+        - name: MIGRATOR_JOB_QUEUE_NAME
+          value: "migrator-jobs-queue"
+
+        - name: POSTGRESQL_PORT
+          value: "{{ include "postgres.port" . }}"
+        - name: POSTGRESQL_USERNAME
+          value: "compliance_service"
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: complianceServiceUserPassword
+        - name: POSTGRESQL_DB
+          value: "compliance"
+        - name: POSTGRESQL_SSLMODE
+          value: "{{ include "postgres.sslMode" . }}"
+        - name: HTTP_ADDRESS
+          value: "0.0.0.0:7251"
+        - name: SCHEDULER_BASEURL
+          value: "http://describe-scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
+        - name: INVENTORY_BASEURL
+          value: "http://inventory-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
+        - name: INTEGRATION_BASEURL
+          value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
+        - name: METADATA_BASEURL
+          value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
+        - name: JAEGER_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: JAEGER_SERVICE_NAME
+          value: "compliance-service"
+        - name: JAEGER_SAMPLE_RATE
+          value: "0.0005"

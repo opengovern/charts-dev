@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkup-worker
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    app: checkup-worker
+spec:
+  minReadySeconds: 10
+  {{- if eq .Values.keda.enabled true }}
+  replicas: 0
+  {{- else }}
+  replicas: 1
+  {{- end }}
+  selector:
+    matchLabels:
+      app: checkup-worker
+  template:
+    metadata:
+      labels:
+        app: checkup-worker
+    spec:
+      serviceAccountName: checkup-worker
+      containers:
+        - name: checkup-worker
+          image: "{{ .Values.opengovernance.docker.registry }}/checkup-job:{{ .Values.opengovernance.docker.tags.checkupJob }}"
+          command: ["/checkup-job"]
+          args:
+            - --id=$(WORKER_ID)
+          imagePullPolicy: Always
+          #resources:
+          #  limits:
+          #    cpu: 100m
+          #    memory: 500Mi
+          #  requests:
+          #    cpu: 100m
+          #    memory: 500Mi
+          env:
+            - name: NATS_URL
+              value: "{{ .Release.Name }}-nats.{{ .Release.Namespace }}.svc.cluster.local:4222"
+
+            - name: WORKER_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: PROMETHEUS_PUSH_ADDRESS
+              value: "prom-system-prometheus-pushgateway.prom-system.svc.cluster.local:9091"
+            - name: INTEGRATION_BASE_URL
+              value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
+            - name: METADATA_BASE_URL
+              value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
+            - name: AUTH_BASE_URL
+              value: "http://auth-service.{{ .Release.Namespace }}.svc.cluster.local:8251"
+            - name: JAEGER_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+
+            - name: JAEGER_SERVICE_NAME
+              value: "checkup-worker"
+
+            - name: DO_TELEMETRY
+              value: "{{ .Values.opengovernance.telemetry.enabled }}"
+            - name: TELEMETRY_WORKSPACE_ID
+              value: "{{ .Release.Namespace }}"
+            - name: TELEMETRY_HOSTNAME
+              value: "{{ .Values.global.domain }}"
+            - name: TELEMETRY_BASE_URL
+              value: "{{ .Values.opengovernance.telemetry.baseUrl }}"

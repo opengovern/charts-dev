@@ -1,0 +1,80 @@
+{
+  "index_patterns": [
+    "compliance_report"
+  ],
+  "template": {
+    "settings": {
+      "index": {
+        "max_inner_result_window": 20000,
+        "number_of_shards": 9,
+        "mapping":{
+            "total_fields": {
+                "limit": "10000"
+            }
+        }
+      }
+    },
+    "mappings": {
+      "_source": {
+        "enabled": true
+      },
+      "dynamic": false,
+      "dynamic_templates": [
+        {
+          "strings_as_keyword": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "double": {
+            "match_mapping_type": "double",
+            "mapping": {
+              "type": "double",
+              "ignore_malformed": true
+            }
+          }
+        },
+        {
+          "long": {
+            "match_mapping_type": "long",
+            "mapping": {
+              "type": "long",
+              "ignore_malformed": true
+            }
+          }
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "keyword"
+        },
+        "reportJobID": {
+          "type": "long"
+        },
+        "describedAt": {
+          "type": "long"
+        },
+        "integrationType": {
+          "type": "keyword"
+        },
+        "integrationID": {
+          "type": "keyword"
+        },
+        "group": {
+          "type": "object",
+          "dynamic": true
+        },
+        "result": {
+          "type": "object",
+          "dynamic": true
+        }
+      }
+    }
+  },
+  "_meta": {
+    "description": "Compliance report index"
+  }
+}
