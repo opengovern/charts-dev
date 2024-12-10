@@ -60,7 +60,7 @@ spec:
         - name: HTTP_ADDRESS
           value: "0.0.0.0:7251"
         - name: SCHEDULER_BASE_URL
-          value: "http://describe-scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
+          value: "http://scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
         - name: INTEGRATION_BASE_URL
           value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
         - name: COMPLIANCE_BASE_URL

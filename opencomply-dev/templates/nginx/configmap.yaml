@@ -158,7 +158,7 @@ data:
 
           rewrite ^/main/schedule(.*) $1 break;
 
-          proxy_pass http://describe-scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251;
+          proxy_pass http://scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251;
           proxy_ssl_verify off;
           proxy_set_header X-Real-IP $remote_addr;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -474,7 +474,7 @@ data:
         location /main/schedule {
           rewrite ^/main/schedule(.*) $1 break;
 
-          proxy_pass http://describe-scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251;
+          proxy_pass http://scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251;
           proxy_ssl_verify off;
           proxy_set_header X-Real-IP $remote_addr;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

@@ -50,7 +50,7 @@ spec:
         - name: METADATA_INTEGRATION__BASE_URL
           value: "http://integration-service.%NAMESPACE%.svc.cluster.local:8000"
         - name: METADATA_SCHEDULER__BASE_URL
-          value: "http://describe-scheduler.%NAMESPACE%.svc.cluster.local:5251"
+          value: "http://scheduler.%NAMESPACE%.svc.cluster.local:5251"
         - name: METADATA_COMPLIANCE__BASE_URL
           value: "http://compliance-service.%NAMESPACE%.svc.cluster.local:7251"
         - name: METADATA_INVENTORY__BASE_URL

@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: describe-scheduler
+  name: scheduler
   namespace: {{ .Release.Namespace }}
   labels:
-    app: describe-scheduler
+    app: scheduler
     monitoring: kaytu
 spec:
   selector:
-    app: describe-scheduler
+    app: scheduler
   ports:
   - name: http
     port: 5251

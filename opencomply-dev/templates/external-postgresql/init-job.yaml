@@ -43,7 +43,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: postgres-secret
-              key: describeSchedulerUserPassword
+              key: schedulerUserPassword
         - name : POSTGRES_POLICY_DB_PASSWORD
           valueFrom:
             secretKeyRef:

@@ -1,36 +1,28 @@
-{{- if eq .Values.queryvalidator.enabled true }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: query-validator-worker
+  name: audit-worker
   namespace: {{ .Release.Namespace }}
   labels:
-    app: query-validator-worker
+    app: audit-worker
 spec:
   minReadySeconds: 10
   replicas: 1
   selector:
     matchLabels:
-      app: query-validator-worker
+      app: audit-worker
   template:
     metadata:
       labels:
-        app: query-validator-worker
+        app: audit-worker
     spec:
       containers:
-        - name: query-validator-worker
-          image: "{{ .Values.opengovernance.docker.registry }}/query-validator-job:{{ .Values.opengovernance.docker.tags.queryValidatorJob }}"
-          command: ["/query-validator-job"]
+        - name: audit-worker
+          image: "{{ .Values.opengovernance.docker.registry }}/audit-job:{{ .Values.opengovernance.docker.tags.auditJob }}"
+          command: ["/audit-job"]
           args:
             - --id=$(WORKER_ID)
           imagePullPolicy: Always
-          #resources:
-          #  limits:
-          #    cpu: 500m
-          #    memory: 1Gi
-          #  requests:
-          #    cpu: 500m
-          #    memory: 100Mi
           env:
             - name: PG_PASSWORD
               valueFrom:
@@ -64,8 +56,6 @@ spec:
               value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
             - name: ESSINK_BASEURL
               value: "http://es-sink-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
-            - name: PENNYWISE_BASE_URL
-              value: "http://pennywise-server-service.kaytu-octopus.svc.cluster.local:8080"
 
             - name: PROMETHEUS_PUSH_ADDRESS
               value: "prom-system-prometheus-pushgateway.prom-system.svc.cluster.local:9091"
@@ -75,8 +65,6 @@ spec:
                 fieldRef:
                   fieldPath: status.hostIP
             - name: JAEGER_SERVICE_NAME
-              value: "query-runner-worker"
+              value: "audit-worker"
             - name: JAEGER_SAMPLE_RATE
               value: "0.0005"
----
-{{- end }}

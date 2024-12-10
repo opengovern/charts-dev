@@ -19,11 +19,11 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ .Release.Name }}-describe-scheduler-helmrelease-fullaccess
+  name: {{ .Release.Name }}-scheduler-helmrelease-fullaccess
   namespace: {{ .Release.Namespace }}
 subjects:
   - kind: ServiceAccount
-    name: describe-scheduler
+    name: scheduler
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role

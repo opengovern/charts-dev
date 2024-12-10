@@ -32,7 +32,7 @@ spec:
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: compliance-worker-manuals-scaled-object
+  name: compliance-worker-manual-scaled-object
   namespace: {{ .Release.Namespace }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
@@ -41,7 +41,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: compliance-worker-manuals
+    name: compliance-worker-manual
   pollingInterval: 5
   cooldownPeriod:  300
   minReplicaCount: 1

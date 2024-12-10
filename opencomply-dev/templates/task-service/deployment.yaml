@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: integration-service
+  name: task-service
   namespace: {{ .Release.Namespace }}
   labels:
-    app: integration-service
+    app: task-service
 spec:
   minReadySeconds: 10
   replicas: {{ .Values.opengovernance.replicaCount }}
   selector:
     matchLabels:
-      app: integration-service
+      app: task-service
   template:
     metadata:
       labels:
-        app: integration-service
+        app: task-service
     spec:
-      serviceAccountName: integration
+      serviceAccountName: task
       containers:
-      - name: integration-service
-        image: "{{ .Values.opengovernance.docker.registry }}/integration:{{ .Values.opengovernance.docker.tags.integration }}"
-        command: ["/integration-service"]
+      - name: task-service
+        image: "{{ .Values.opengovernance.docker.registry }}/task-service:{{ .Values.opengovernance.docker.tags.tasks }}"
+        command: ["/task-service"]
         imagePullPolicy: Always
         #resources:
         #  limits:
@@ -30,77 +30,75 @@ spec:
         #    cpu: 500m
         #    memory: 100Mi
         env:
-        - name: INTEGRATION_POSTGRES__HOST
+        - name: TASKS_POSTGRES__HOST
           value: "{{ include "postgres.endpoint" . }}"
-        - name: INTEGRATION_POSTGRES__PORT
+        - name: TASKS_POSTGRES__PORT
           value: "{{ include "postgres.port" . }}"
-        - name: INTEGRATION_POSTGRES__DB
-          value: "integration"
-        - name: INTEGRATION_POSTGRES__USERNAME
+        - name: TASKS_POSTGRES__DB
+          value: "task"
+        - name: TASKS_POSTGRES__USERNAME
           value: "postgres"
-        - name: INTEGRATION_POSTGRES__PASSWORD
+        - name: TASKS_POSTGRES__PASSWORD
           value: "postgres"
-        - name: INTEGRATION_POSTGRES__SSLMODE
+        - name: TASKS_POSTGRES__SSLMODE
           value: "{{ include "postgres.sslMode" . }}"
-        - name: INTEGRATION_HTTP__ADDRESS
-          value: "0.0.0.0:8000"
-        - name: INTEGRATION_INVENTORY__BASE_URL
+        - name: TASKS_HTTP__ADDRESS
+          value: "0.0.0.0:8001"
+        - name: TASKS_INVENTORY__BASE_URL
           value: "http://inventory-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
-        - name: INTEGRATION_DESCRIBE__BASE_URL
+        - name: TASKS_DESCRIBE__BASE_URL
           value: "http://scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
-        - name: INTEGRATION_METADATA__BASE_URL
+        - name: TASKS_METADATA__BASE_URL
           value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
 
-        - name: INTEGRATION_STEAMPIPE__HOST
+        - name: TASKS_STEAMPIPE__HOST
           value: steampipe-service.{{ .Release.Namespace }}.svc.cluster.local
-        - name: INTEGRATION_STEAMPIPE__PORT
+        - name: TASKS_STEAMPIPE__PORT
           value: "9193"
-        - name: INTEGRATION_STEAMPIPE__USERNAME
+        - name: TASKS_STEAMPIPE__USERNAME
           value: "steampipe"
-        - name: INTEGRATION_STEAMPIPE__PASSWORD
+        - name: TASKS_STEAMPIPE__PASSWORD
           value: "abcd"
-        - name: INTEGRATION_STEAMPIPE__DB
+        - name: TASKS_STEAMPIPE__DB
           value: "steampipe"
 
-        - name: INTEGRATION_VAULT__PROVIDER
+        - name: TASKS_VAULT__PROVIDER
           value: {{ .Values.opengovernance.vault.provider }}
-        - name: INTEGRATION_VAULT__AWS__REGION
+        - name: TASKS_VAULT__AWS__REGION
           value: {{ .Values.opengovernance.vault.aws.region }}
-        - name: INTEGRATION_VAULT__AWS__ROLE_ARN
+        - name: TASKS_VAULT__AWS__ROLE_ARN
           value: {{ .Values.opengovernance.vault.aws.roleArn }}
-        - name: INTEGRATION_VAULT__AWS__ACCESS_KEY
+        - name: TASKS_VAULT__AWS__ACCESS_KEY
           value: {{ .Values.opengovernance.vault.aws.accessKey }}
-        - name: INTEGRATION_VAULT__AWS__SECRET_KEY
+        - name: TASKS_VAULT__AWS__SECRET_KEY
           value: {{ .Values.opengovernance.vault.aws.secretKey }}
-        - name: INTEGRATION_VAULT__AZURE__BASE_URL
+        - name: TASKS_VAULT__AZURE__BASE_URL
           value: {{ .Values.opengovernance.vault.azure.baseUrl }}
-        - name: INTEGRATION_VAULT__AZURE__CLIENT_ID
+        - name: TASKS_VAULT__AZURE__CLIENT_ID
           value: {{ .Values.opengovernance.vault.azure.clientId }}
-        - name: INTEGRATION_VAULT__AZURE__TENANT_ID
+        - name: TASKS_VAULT__AZURE__TENANT_ID
           value: {{ .Values.opengovernance.vault.azure.tenantId }}
-        - name: INTEGRATION_VAULT__AZURE__CLIENT_SECRET
+        - name: TASKS_VAULT__AZURE__CLIENT_SECRET
           value: {{ .Values.opengovernance.vault.azure.clientSecret }}
-        - name: INTEGRATION_VAULT__HASHICORP__ADDRESS
+        - name: TASKS_VAULT__HASHICORP__ADDRESS
           value: "http://{{ .Release.Name }}-vault-internal.{{.Release.Namespace}}.svc.cluster.local:8200"
-        - name: INTEGRATION_VAULT__KEY_ID
+        - name: TASKS_VAULT__KEY_ID
           value: {{ .Values.opengovernance.vault.keyID }}
 
-        - name: INTEGRATION_MASTER_ACCESS_KEY
+        - name: TASKS_MASTER_ACCESS_KEY
           value: ""
-        - name: INTEGRATION_MASTER_SECRET_KEY
+        - name: TASKS_MASTER_SECRET_KEY
           value: ""
-        - name: INTEGRATION_JAEGER_AGENT_HOST
+        - name: TASKS_JAEGER_AGENT_HOST
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        - name: INTEGRATION_JAEGER_SERVICE_NAME
-          value: "integration-service"
-        - name: INTEGRATION_JAEGER_SAMPLE_RATE
+        - name: TASKS_JAEGER_SERVICE_NAME
+          value: "task-service"
+        - name: TASKS_JAEGER_SAMPLE_RATE
           value: "0.005"
 
         - name: CURRENT_NAMESPACE
           value: "{{ .Release.Namespace }}"
         - name: KEDA_ENABLED
           value: "{{ .Values.keda.enabled }}"
-        - name: NATS_URL
-          value: "{{ .Release.Name }}-nats.{{ .Release.Namespace }}.svc.cluster.local:4222"

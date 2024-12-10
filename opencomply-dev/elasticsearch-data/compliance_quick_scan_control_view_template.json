@@ -1,0 +1,46 @@
+{
+  "index_patterns": ["compliance_quick_scan_control_view"],
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1
+    },
+    "mappings": {
+      "properties": {
+        "es_id": {
+          "type": "keyword"
+        },
+        "es_index": {
+          "type": "keyword"
+        },
+        "controls": {
+          "enabled": false
+        },
+        "compliance_summary": {
+          "type": "object",
+          "dynamic": true
+        },
+        "job_summary": {
+          "type": "object",
+          "properties": {
+            "job_id": {
+              "type": "long"
+            },
+            "auditable": {
+              "type": "boolean"
+            },
+            "framework_id": {
+              "type": "keyword"
+            },
+            "job_started_at": {
+              "type": "date"
+            },
+            "integration_ids": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  }
+}

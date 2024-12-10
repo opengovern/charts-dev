@@ -55,7 +55,7 @@ spec:
         - name: HTTP_ADDRESS
           value: "0.0.0.0:7251"
         - name: SCHEDULER_BASEURL
-          value: "http://describe-scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
+          value: "http://scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
         - name: INVENTORY_BASEURL
           value: "http://inventory-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
         - name: INTEGRATION_BASEURL

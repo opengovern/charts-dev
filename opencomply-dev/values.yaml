@@ -8,26 +8,29 @@ opengovernance:
   docker:
     registry: ghcr.io/opengovern
     tags:
-      webui: v0.488.2
-      auth: v0.476.2
+      webui:  v0.512.21
+      auth: v0.508.3
       swagger: v0.476.2
-      checkupJob: v0.476.2
-      postInstallJob: v0.488.3
-      describeSchedulerService: v0.485.10
+      checkupJob: v0.508.3
+      postInstallJob: v0.508.3
+      schedulerService: v0.512.20
       describeWorkerAWS: local-v0.1.4
       describeWorkerGithub: local-v0.1.18
-      integration: v0.491.0
-      metadata: v0.485.10
-      inventory: v0.485.10
-      compliance: v0.485.10
-      complianceSummarizerJob: v0.485.10
-      complianceReportJob: v0.485.10
-      steampipe: v0.485.10
-      esSink: v0.476.2
-      queryRunnerJob: v0.485.10
-      queryValidatorJob: v0.485.10
-      demoImporterJob: v0.434.15
-      psqlImport: v0.434.15
+      describeWorkerOpenai: local-v0.1.11
+      integration: v0.514.1
+      metadata: v0.508.5
+      inventory: v0.512.7
+      compliance: v0.512.7
+      complianceSummarizerJob: v0.512.18
+      complianceReportJob: v0.512.15
+      steampipe: v0.512.15
+      esSink: v0.508.3
+      auditJob: v0.512.19
+      queryRunnerJob: v0.512.15
+      queryValidatorJob: v0.512.15
+      demoImporterJob: v0.512.22
+      psqlImport: v0.512.15
+      tasks:  v0.512.2
   apikey:
     public: ""
     private: ""
@@ -101,11 +104,11 @@ postgresql:
   enabled: true
   architecture: replication
   readReplicas:
-    replicaCount: 1
+    replicaCount: 0
   image:
     registry: ghcr.io
     repository: opengovern/postgres
-    tag: v0.474.1
+    tag: v0.508.0 
     pullPolicy: Always
     debug: false
   global:
@@ -114,7 +117,7 @@ postgresql:
         postgresPassword: "postgres"
   primary:
     persistence:
-      size: 20Gi
+      size: 10Gi
     configuration: |
       listen_addresses = '*'
       max_wal_senders = 10
@@ -183,7 +186,7 @@ postgresql:
         valueFrom:
           secretKeyRef:
             name: postgres-secret
-            key: describeSchedulerUserPassword
+            key: schedulerUserPassword
       - name : POSTGRES_POLICY_DB_PASSWORD
         valueFrom:
           secretKeyRef:
@@ -248,7 +251,7 @@ opensearch:
   enabled: true
   clusterName: opensearch-cluster
   persistence:
-    size: 50Gi
+    size: 25Gi
   opensearchJavaOpts: "-XX:-HeapDumpOnOutOfMemoryError -Xmx3072M -Xms3072M"
   resources:
   requests:
@@ -296,7 +299,7 @@ nats:
         enabled: true
         storageDirectory: /data
         pvc:
-          enabled: true
+          enabled: false
           size: 25Gi
   container:
     merge:
@@ -325,8 +328,8 @@ keda:
   enabled: true
 populateWithSampleData:
   enabled: false
-  fileURL: "https://opengovernance.nyc3.cdn.digitaloceanspaces.com/demo-data/v3.0/demo_data.tar.gz.enc"
+  fileURL: "https://demo-data.opencomply.io/v1/demo_data.tar.gz.enc"
 swagger:
   enabled: false
 queryvalidator:
-  enabled: true
+  enabled: false

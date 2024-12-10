@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ .Release.Name }}-make-describers-access
+  name: {{ .Release.Name }}-make-tasks-access
 rules:
   - apiGroups:
       - "keda.sh/v1alpha1"
@@ -47,12 +47,12 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ .Release.Name }}-make-describers-access-to-integration
+  name: {{ .Release.Name }}-make-tasks-access
 subjects:
   - kind: ServiceAccount
-    name: integration
+    name: task
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
-  name: {{ .Release.Name }}-make-describers-access
+  name: {{ .Release.Name }}-make-tasks-access
   apiGroup: rbac.authorization.k8s.io

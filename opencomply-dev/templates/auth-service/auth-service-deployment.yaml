@@ -84,7 +84,7 @@ spec:
             - name: INTEGRATION_BASE_URL
               value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
             - name: DESCRIBE_BASE_URL
-              value: "http://describe-scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
+              value: "http://scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
             - name: METADATA_BASE_URL
               value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
             - name: DEX_GRPC_ADDR

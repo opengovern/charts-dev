@@ -31,7 +31,7 @@ spec:
       containers:
         - name: import-es-demo-data
           image: "{{ .Values.opengovernance.docker.registry }}/demo-importer-job:{{ .Values.opengovernance.docker.tags.demoImporterJob }}"
-          command: ["/demo-importer-worker"]
+          command: ["/demo-importer-job"]
           env:
 {{- include "elastic.envs" . | indent 12 }}
             - name: POSTGRESQL_USERNAME

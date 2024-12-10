@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: describe-scheduler
+  name: scheduler
   namespace: {{ .Release.Namespace }}
   labels:
-    app: describe-scheduler
+    app: scheduler
 spec:
   minReadySeconds: 10
   replicas: 1
   selector:
     matchLabels:
-      app: describe-scheduler
+      app: scheduler
   template:
     metadata:
       labels:
-        app: describe-scheduler
+        app: scheduler
     spec:
       serviceAccountName: scheduler
       containers:
-      - name: describe-scheduler
-        image: "{{ .Values.opengovernance.docker.registry }}/describe-scheduler-service:{{ .Values.opengovernance.docker.tags.describeSchedulerService }}"
-        command: ["/describe-scheduler-service"]
+      - name: scheduler
+        image: "{{ .Values.opengovernance.docker.registry }}/scheduler-service:{{ .Values.opengovernance.docker.tags.schedulerService }}"
+        command: ["/scheduler-service"]
         #resources:
         #  limits:
         #    cpu: 500m
@@ -50,7 +50,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: postgres-secret
-              key: describeSchedulerUserPassword
+              key: schedulerUserPassword
         - name: POSTGRESQL_SSLMODE
           value: "{{ include "postgres.sslMode" . }}"
         - name: SCHEDULER_ID
@@ -97,7 +97,7 @@ spec:
           value: "auth-service.{{ .Release.Namespace }}.svc.cluster.local:50051"
 {{- include "elastic.envs" . | indent 8 }}
         - name: DESCRIBE_JOB_ENDPOINT_LOCAL
-          value: "describe-scheduler.{{ .Release.Namespace }}.svc.cluster.local:5252"
+          value: "scheduler.{{ .Release.Namespace }}.svc.cluster.local:5252"
         - name: DESCRIBE_DELIVER_ENDPOINT_LOCAL
           value: "es-sink-service.{{ .Release.Namespace }}.svc.cluster.local:5252"
 {{/*        - name: DESCRIBE_DELIVER_ENDPOINT_EXTERNAL*/}}
@@ -136,7 +136,7 @@ spec:
         - name: OPERATION_MODE_CONFIG
           value: "scheduler"
         - name: JAEGER_SERVICE_NAME
-          value: "describe-scheduler"
+          value: "scheduler"
         - name: JAEGER_AGENT_HOST
           valueFrom:
             fieldRef:
