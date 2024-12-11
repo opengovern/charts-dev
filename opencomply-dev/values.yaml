@@ -39,7 +39,7 @@ opengovernance:
     muiLicense: xxx
   telemetry:
     enabled: true
-    baseUrl: "http://stats.opencomply.io"
+    baseUrl: "https://stats.opencomply.io"
   vault:
     provider: hashicorp-vault
     aws:
