@@ -27,7 +27,7 @@ opengovernance:
       queryValidatorJob: v0.512.15
       demoImporterJob: v0.512.22
       psqlImport: v0.515.1
-      tasks: v0.521.3
+      tasks: v0.521.15
   apikey:
     public: ""
     private: ""
@@ -105,7 +105,7 @@ postgresql:
   image:
     registry: ghcr.io
     repository: opengovern/postgres
-    tag: v0.508.0 
+    tag: v0.521.5
     pullPolicy: Always
     debug: false
   global:
@@ -239,6 +239,11 @@ postgresql:
           secretKeyRef:
             name: postgres-secret
             key: integrationServiceUserPassword
+      - name: POSTGRES_TASK_DB_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: postgres-secret
+            key: taskServiceUserPassword
 externalOpensearch:
   enabled: false
   endpoint: "https://opensearch.example.com"

@@ -24,6 +24,16 @@ rules:
       - "delete"
       - "update"
   - apiGroups:
+      - "keda.sh"
+    resources:
+      - "scaledjobs"
+    verbs:
+      - "get"
+      - "list"
+      - "create"
+      - "delete"
+      - "update"
+  - apiGroups:
       - "apps"
     resources:
       - "deployments"
@@ -37,6 +47,16 @@ rules:
       - ""
     resources:
       - "pods"
+    verbs:
+      - "get"
+      - "list"
+      - "create"
+      - "delete"
+      - "update"
+  - apiGroups:
+      - "batch"
+    resources:
+      - "jobs"
     verbs:
       - "get"
       - "list"

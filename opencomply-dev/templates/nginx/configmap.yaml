@@ -54,6 +54,35 @@ data:
           proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
         }
 
+        location /main/tasks {
+          if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Methods' '*';
+            add_header 'Access-Control-Allow-Headers' '*';
+            add_header 'Access-Control-Max-Age' 86400;
+            add_header 'Content-Type' 'text/plain charset=UTF-8';
+            add_header 'Content-Length' 0;
+            return 204; break;
+          }
+          rewrite ^/main/tasks(.*) $1 break;
+
+          proxy_pass http://task-service.{{ .Release.Namespace }}.svc.cluster.local:8001;
+          proxy_ssl_verify off;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header X-Forwarded-Host $host;
+          proxy_set_header X-Forwarded-Port $server_port;
+          proxy_set_header X-Platform-WorkspaceID $X_Platform_WorkspaceID;
+          proxy_set_header X-Platform-WorkspaceName $X_Platform_WorkspaceName;
+          proxy_set_header X-Platform-UserId $X_Platform_UserId;
+          proxy_set_header X-Platform-UserRole $X_Platform_UserRole;
+          proxy_set_header X-Platform-UserConnectionsScope $X_Platform_UserConnectionsScope;
+
+          proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+        }
+
         location /main/inventory {
           if ($request_method = 'OPTIONS') {
             add_header 'Access-Control-Allow-Origin' '*';
@@ -399,6 +428,25 @@ data:
           rewrite ^/main/integration(.*) $1 break;
 
           proxy_pass http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000;
+          proxy_ssl_verify off;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header X-Forwarded-Host $host;
+          proxy_set_header X-Forwarded-Port $server_port;
+          proxy_set_header X-Platform-WorkspaceID $X_Platform_WorkspaceID;
+          proxy_set_header X-Platform-WorkspaceName $X_Platform_WorkspaceName;
+          proxy_set_header X-Platform-UserId $X_Platform_UserId;
+          proxy_set_header X-Platform-UserRole $X_Platform_UserRole;
+          proxy_set_header X-Platform-UserConnectionsScope $X_Platform_UserConnectionsScope;
+
+          proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+        }
+
+        location /main/tasks {
+          rewrite ^/main/tasks(.*) $1 break;
+
+          proxy_pass http://task-service.{{ .Release.Namespace }}.svc.cluster.local:8001;
           proxy_ssl_verify off;
           proxy_set_header X-Real-IP $remote_addr;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

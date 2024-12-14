@@ -104,3 +104,5 @@ spec:
           value: "{{ .Values.keda.enabled }}"
         - name: NATS_URL
           value: "{{ .Release.Name }}-nats.{{ .Release.Namespace }}.svc.cluster.local:4222"
+        - name: SCALED_OBJECT_NATS_URL
+          value: "{{ .Release.Namespace }}-nats-headless.{{ .Release.Namespace }}.svc.cluster.local:8222"
