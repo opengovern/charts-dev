@@ -9,7 +9,7 @@ opengovernance:
     registry: ghcr.io/opengovern
     tags:
       webui: v0.517.0
-      auth: v0.508.3
+      auth: v0.524.8
       swagger: v0.476.2
       checkupJob: v0.517.6
       postInstallJob: v0.517.6
@@ -17,7 +17,7 @@ opengovernance:
       integration: v0.523.1
       metadata: v0.517.7
       inventory: v0.517.6
-      compliance: v0.517.6
+      compliance: v0.524.7
       complianceSummarizerJob: v0.512.18
       complianceReportJob: v0.523.1
       steampipe: v0.523.1
@@ -27,7 +27,7 @@ opengovernance:
       queryValidatorJob: v0.523.1
       demoImporterJob: v0.512.22
       psqlImport: v0.515.1
-      tasks: v0.522.3
+      tasks: v0.524.14
   apikey:
     public: ""
     private: ""
