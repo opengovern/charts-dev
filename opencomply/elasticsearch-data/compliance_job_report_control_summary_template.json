@@ -1,5 +1,5 @@
 {
-  "index_patterns": ["compliance_quick_scan_control_view"],
+  "index_patterns": ["compliance_job_report_control_summary"],
   "template": {
     "settings": {
       "number_of_shards": 1,
@@ -14,7 +14,9 @@
           "type": "keyword"
         },
         "controls": {
-          "enabled": false
+          "type": "object",
+          "dynamic": "false",
+          "enabled": true
         },
         "compliance_summary": {
           "type": "object",

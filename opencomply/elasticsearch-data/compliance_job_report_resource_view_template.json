@@ -1,0 +1,43 @@
+{
+  "index_patterns": ["compliance_job_report_resource_view"],
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1
+    },
+    "mappings": {
+      "properties": {
+        "es_id": {
+          "type": "keyword"
+        },
+        "es_index": {
+          "type": "keyword"
+        },
+        "integrations": {
+          "enabled": false
+        },
+        "compliance_summary": {
+          "type": "object",
+          "dynamic": true
+        },
+        "job_summary": {
+          "type": "object",
+          "properties": {
+            "job_id": {
+              "type": "long"
+            },
+            "framework_id": {
+              "type": "keyword"
+            },
+            "job_started_at": {
+              "type": "date"
+            },
+            "integration_ids": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  }
+}
