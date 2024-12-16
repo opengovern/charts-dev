@@ -18,6 +18,9 @@
           "dynamic": "false",
           "enabled": true
         },
+        "control_score": {
+          "enabled": false
+        },
         "compliance_summary": {
           "type": "object",
           "dynamic": true
