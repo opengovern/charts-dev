@@ -9,25 +9,25 @@ opengovernance:
     registry: ghcr.io/opengovern
     tags:
       webui: v0.531.0
-      auth: v0.524.8
-      swagger: v0.476.2
-      checkupJob: v0.517.6
+      auth: v0.532.1
+      swagger: v0.532.1
+      checkupJob: v0.532.1
       postInstallJob: v0.517.6
-      schedulerService: v0.527.8
-      integration: v0.527.0
-      metadata: v0.517.7
-      inventory: v0.517.6
-      compliance: v0.527.9
-      complianceSummarizerJob: v0.527.8
-      complianceReportJob: v0.527.8
-      steampipe: v0.523.1
-      esSink: v0.508.3
+      schedulerService: v0.532.1
+      integration: v0.532.1
+      metadata: v0.532.1
+      inventory: v0.532.1
+      compliance: v0.532.1
+      complianceSummarizerJob: v0.532.1
+      complianceReportJob: v0.532.1
+      steampipe: v0.532.1
+      esSink: v0.532.1
       auditJob: v0.527.8
       queryRunnerJob: v0.524.26
       queryValidatorJob: v0.524.26
       demoImporterJob: v0.512.22
       psqlImport: v0.515.1
-      tasks: v0.524.20
+      tasks: v0.532.1
   apikey:
     public: ""
     private: ""
