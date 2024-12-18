@@ -22,13 +22,6 @@ spec:
         image: "{{ .Values.opengovernance.docker.registry }}/task-service:{{ .Values.opengovernance.docker.tags.tasks }}"
         command: ["/task-service"]
         imagePullPolicy: Always
-        #resources:
-        #  limits:
-        #    cpu: 500m
-        #    memory: 1Gi
-        #  requests:
-        #    cpu: 500m
-        #    memory: 100Mi
         env:
         - name: TASKS_POSTGRES__HOST
           value: "{{ include "postgres.endpoint" . }}"
@@ -44,23 +37,6 @@ spec:
           value: "{{ include "postgres.sslMode" . }}"
         - name: TASKS_HTTP__ADDRESS
           value: "0.0.0.0:8001"
-        - name: TASKS_INVENTORY__BASE_URL
-          value: "http://inventory-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
-        - name: TASKS_DESCRIBE__BASE_URL
-          value: "http://scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
-        - name: TASKS_METADATA__BASE_URL
-          value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
-
-        - name: TASKS_STEAMPIPE__HOST
-          value: steampipe-service.{{ .Release.Namespace }}.svc.cluster.local
-        - name: TASKS_STEAMPIPE__PORT
-          value: "9193"
-        - name: TASKS_STEAMPIPE__USERNAME
-          value: "steampipe"
-        - name: TASKS_STEAMPIPE__PASSWORD
-          value: "abcd"
-        - name: TASKS_STEAMPIPE__DB
-          value: "steampipe"
 
         - name: TASKS_VAULT__PROVIDER
           value: {{ .Values.opengovernance.vault.provider }}
@@ -85,18 +61,10 @@ spec:
         - name: TASKS_VAULT__KEY_ID
           value: {{ .Values.opengovernance.vault.keyID }}
 
-        - name: TASKS_MASTER_ACCESS_KEY
-          value: ""
-        - name: TASKS_MASTER_SECRET_KEY
-          value: ""
-        - name: TASKS_JAEGER_AGENT_HOST
-          valueFrom:
-            fieldRef:
-              fieldPath: status.hostIP
-        - name: TASKS_JAEGER_SERVICE_NAME
-          value: "task-service"
-        - name: TASKS_JAEGER_SAMPLE_RATE
-          value: "0.005"
+{{- include "elastic.envs" . | indent 8 }}
+
+        - name: TASKS_ESSINK_ENDPOINT
+          value: "es-sink-service.{{ .Release.Namespace }}.svc.cluster.local:5252"
 
         - name: CURRENT_NAMESPACE
           value: "{{ .Release.Namespace }}"

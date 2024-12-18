@@ -14,7 +14,7 @@ opengovernance:
       checkupJob: v0.532.1
       postInstallJob: v0.530.1
       schedulerService: v0.536.3
-      integration: v0.536.2
+      integration: v0.536.6
       metadata: v0.533.11
       inventory: v0.533.11
       compliance: v0.536.3
@@ -27,7 +27,7 @@ opengovernance:
       queryValidatorJob: v0.536.2
       demoImporterJob: v0.512.22
       psqlImport: v0.515.1
-      tasks: v0.532.1
+      tasks: v0.537.1
   apikey:
     public: ""
     private: ""
