@@ -18,13 +18,13 @@ opengovernance:
       metadata: v0.533.11
       inventory: v0.533.11
       compliance:  v0.538.6
-      complianceSummarizerJob: v0.536.4
-      complianceReportJob: v0.536.2
+      complianceSummarizerJob:  v0.538.6
+      complianceReportJob:  v0.538.6
       steampipe:  v0.538.6
       esSink: v0.532.1
-      auditJob: v0.536.2
-      queryRunnerJob: v0.536.2
-      queryValidatorJob: v0.536.2
+      auditJob:  v0.538.6
+      queryRunnerJob:  v0.538.6
+      queryValidatorJob:  v0.538.6
       demoImporterJob: v0.512.22
       psqlImport: v0.515.1
       tasks: v0.538.5
