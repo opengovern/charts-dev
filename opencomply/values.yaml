@@ -20,7 +20,7 @@ opengovernance:
       compliance: v0.536.3
       complianceSummarizerJob: v0.536.4
       complianceReportJob: v0.536.2
-      steampipe: v0.536.2
+      steampipe: v0.537.0
       esSink: v0.532.1
       auditJob: v0.536.2
       queryRunnerJob: v0.536.2

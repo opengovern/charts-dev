@@ -61,6 +61,10 @@ spec:
             value: "false"
           - name: METADATA_BASEURL
             value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
+          - name: REGO_ENABLED
+            value: "true"
+          - name: REGO_PORT
+            value: "8080"
         volumeMounts:
 #          - name: steampipe-content
 #            mountPath: /home/steampipe/.steampipe/
