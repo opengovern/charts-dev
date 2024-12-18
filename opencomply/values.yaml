@@ -13,14 +13,14 @@ opengovernance:
       swagger: v0.476.2
       checkupJob: v0.532.1
       postInstallJob: v0.530.1
-      schedulerService: v0.536.3
-      integration: v0.536.6
+      schedulerService:  v0.538.6
+      integration:  v0.538.6
       metadata: v0.533.11
       inventory: v0.533.11
-      compliance: v0.536.3
+      compliance:  v0.538.6
       complianceSummarizerJob: v0.536.4
       complianceReportJob: v0.536.2
-      steampipe: v0.537.8
+      steampipe:  v0.538.6
       esSink: v0.532.1
       auditJob: v0.536.2
       queryRunnerJob: v0.536.2
