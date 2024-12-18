@@ -9,7 +9,9 @@ spec:
   selector:
     app: steampipe-service
   ports:
-    - port: 9193
+    - name: steampipe
+      port: 9193
       targetPort: 9193
-    - port: 8001
+    - name: http
+      port: 8001
       targetPort: 8001
