@@ -29,5 +29,14 @@ spec:
         #    cpu: 500m
         #    memory: 100Mi
         env:
-          - name: REGO_HTTP__ADDRESS
+          - name: HTTP_ADDRESS
             value: "0.0.0.0:8000"
+{{- include "elastic.envs" . | indent 10 }}
+          - name: STEAMPIPE_LOG_LEVEL
+            value: "WARN"
+          - name: STEAMPIPE_MAX_PARALLEL
+            value: "50"
+          - name: STEAMPIPE_CACHE
+            value: "false"
+          - name: STEAMPIPE_UPDATE_CHECK
+            value: "false"

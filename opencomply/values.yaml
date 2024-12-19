@@ -28,7 +28,7 @@ opengovernance:
       demoImporterJob: v0.512.22
       psqlImport: v0.515.1
       tasks: v0.540.7
-      rego: v0.540.7
+      rego: v0.541.2
   apikey:
     public: ""
     private: ""
