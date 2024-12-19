@@ -16,7 +16,6 @@ spec:
       labels:
         app: rego-service
     spec:
-      serviceAccountName: rego
       containers:
       - name: rego-service
         image: "{{ .Values.opengovernance.docker.registry }}/rego-service:{{ .Values.opengovernance.docker.tags.rego }}"
