@@ -12,6 +12,3 @@ spec:
     - name: steampipe
       port: 9193
       targetPort: 9193
-    - name: http
-      port: 8001
-      targetPort: 8001

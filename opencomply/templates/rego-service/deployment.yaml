@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rego-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: rego-service
+spec:
+  minReadySeconds: 10
+  replicas: {{ .Values.opengovernance.replicaCount }}
+  selector:
+    matchLabels:
+      app: rego-service
+  template:
+    metadata:
+      labels:
+        app: rego-service
+    spec:
+      serviceAccountName: rego
+      containers:
+      - name: rego-service
+        image: "{{ .Values.opengovernance.docker.registry }}/rego-service:{{ .Values.opengovernance.docker.tags.rego }}"
+        command: ["/rego-service"]
+        imagePullPolicy: Always
+        #resources:
+        #  limits:
+        #    cpu: 500m
+        #    memory: 1Gi
+        #  requests:
+        #    cpu: 500m
+        #    memory: 100Mi
+        env:
+          - name: REGO_HTTP__ADDRESS
+            value: "0.0.0.0:8000"
