@@ -12,23 +12,23 @@ opengovernance:
       auth: v0.540.7
       swagger: v0.476.2
       checkupJob: v0.540.7
-      postInstallJob: v0.530.1
-      schedulerService: v0.540.7
-      integration: v0.540.7
-      metadata: v0.540.7
-      inventory: v0.540.7
-      compliance: v0.540.7
-      complianceSummarizerJob: v0.540.7
-      complianceReportJob: v0.541.3
-      steampipe: v0.541.3
+      postInstallJob: v0.541.14
+      schedulerService: v0.541.14
+      integration: v0.541.14
+      metadata: v0.541.14
+      inventory: v0.541.14
+      compliance: v0.541.12
+      complianceSummarizerJob: v0.541.14
+      complianceReportJob: v0.541.14
+      steampipe: v0.541.14
       esSink: v0.540.7
-      auditJob: v0.541.3
-      queryRunnerJob: v0.541.3
-      queryValidatorJob: v0.541.3
+      auditJob: v0.541.14
+      queryRunnerJob: v0.541.14
+      queryValidatorJob: v0.541.14
       demoImporterJob: v0.512.22
       psqlImport: v0.515.1
-      tasks: v0.540.7
-      rego: v0.541.2
+      tasks: v0.541.14
+      rego: v0.541.14
   apikey:
     public: ""
     private: ""
