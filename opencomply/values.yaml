@@ -14,7 +14,7 @@ opengovernance:
       checkupJob: v0.540.7
       postInstallJob: v0.541.14
       schedulerService: v0.541.14
-      integration: v0.541.14
+      integration: v0.543.0
       metadata: v0.541.14
       inventory: v0.541.14
       compliance: v0.541.12
