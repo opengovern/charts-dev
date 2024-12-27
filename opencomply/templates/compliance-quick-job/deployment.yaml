@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: audit-worker
+  name: compliance-quick-worker
   namespace: {{ .Release.Namespace }}
   labels:
-    app: audit-worker
+    app: compliance-quick-worker
 spec:
   minReadySeconds: 10
   replicas: 1
   selector:
     matchLabels:
-      app: audit-worker
+      app: compliance-quick-worker
   template:
     metadata:
       labels:
-        app: audit-worker
+        app: compliance-quick-worker
     spec:
       containers:
         - name: audit-worker
-          image: "{{ .Values.opengovernance.docker.registry }}/audit-job:{{ .Values.opengovernance.docker.tags.auditJob }}"
+          image: "{{ .Values.opengovernance.docker.registry }}/audit-job:{{ .Values.opengovernance.docker.tags.complianceQuick }}"
           command: ["/audit-job"]
           args:
             - --id=$(WORKER_ID)
