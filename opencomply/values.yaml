@@ -27,7 +27,7 @@ opengovernance:
       queryValidatorJob: v0.560.56
       demoImporterJob: v0.512.22
       psqlImport: v0.515.1
-      tasks: v0.562.0
+      tasks: v0.563.1
       rego: v0.561.2
   apikey:
     public: ""
