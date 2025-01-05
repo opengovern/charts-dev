@@ -15,7 +15,7 @@ opengovernance:
       postInstallJob: v0.572.0
       schedulerService: v0.572.0
       integration: v0.572.0
-      core: v0.572.0
+      core: v0.573.0
       compliance: v0.572.0
       complianceSummarizerJob: v0.572.0
       complianceReportJob: v0.572.0
