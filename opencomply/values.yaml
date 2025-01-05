@@ -9,25 +9,25 @@ opengovernance:
     registry: ghcr.io/opengovern
     tags:
       webui: v0.567.3
-      auth: v0.561.2
+      auth: v0.571.0-dev.0
       swagger: v0.476.2
-      checkupJob: v0.570.0-dev.0
-      postInstallJob: v0.570.0-dev.0
-      schedulerService: v0.570.0-dev.0
-      integration: v0.570.0-dev.0
-      core: v0.570.0-dev.0
-      compliance: v0.570.0-dev.0
-      complianceSummarizerJob: v0.561.2
-      complianceReportJob: v0.561.2
-      steampipe: v0.561.2
-      esSink: v0.561.2
-      complianceQuick: v0.569.12
-      queryRunnerJob: v0.569.12
-      queryValidatorJob: v0.569.12
-      demoImporterJob: v0.512.22
-      psqlImport: v0.515.1
-      tasks: v0.569.12
-      rego: v0.569.12
+      checkupJob: v0.571.0-dev.0
+      postInstallJob: v0.571.0-dev.0
+      schedulerService: v0.571.0-dev.0
+      integration: v0.571.0-dev.0
+      core: v0.571.0-dev.0
+      compliance: v0.571.0-dev.0
+      complianceSummarizerJob: v0.571.0-dev.0
+      complianceReportJob: v0.571.0-dev.0
+      steampipe: v0.571.0-dev.0
+      esSink: v0.571.0-dev.0
+      complianceQuick: v0.571.0-dev.0
+      queryRunnerJob: v0.571.0-dev.0
+      queryValidatorJob: v0.571.0-dev.0
+      demoImporterJob: v0.571.0-dev.0
+      psqlImport: v0.571.0-dev.0
+      tasks: v0.572.0-dev.0
+      rego: v0.571.0-dev.0
   apikey:
     public: ""
     private: ""
@@ -105,7 +105,7 @@ postgresql:
   image:
     registry: ghcr.io
     repository: opengovern/postgres
-    tag: v0.570.0-dev.0
+    tag: v0.571.0-dev.0
     pullPolicy: Always
     debug: false
   global:
