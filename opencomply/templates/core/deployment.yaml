@@ -110,11 +110,3 @@ spec:
           value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
         - name: COMPLIANCE_BASE_URL
           value: "http://compliance-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
-
-
-        - name: JAEGER_AGENT_HOST
-          valueFrom:
-            fieldRef:
-              fieldPath: status.hostIP
-        - name: JAEGER_SERVICE_NAME
-          value: "core-service"
