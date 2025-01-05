@@ -59,7 +59,6 @@ spec:
           value: "abcd"
         - name: INTEGRATION_STEAMPIPE__DB
           value: "steampipe"
-
         - name: INTEGRATION_VAULT__PROVIDER
           value: {{ .Values.opengovernance.vault.provider }}
         - name: INTEGRATION_VAULT__AWS__REGION
@@ -82,7 +81,6 @@ spec:
           value: "http://{{ .Release.Name }}-vault-internal.{{.Release.Namespace}}.svc.cluster.local:8200"
         - name: INTEGRATION_VAULT__KEY_ID
           value: {{ .Values.opengovernance.vault.keyID }}
-
         - name: INTEGRATION_MASTER_ACCESS_KEY
           value: ""
         - name: INTEGRATION_MASTER_SECRET_KEY
