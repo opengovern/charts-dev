@@ -37,11 +37,11 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: steampipeUserPassword
-            - name: METADATA_DB_HOST
+            - name: CORE_DB_HOST
               value: "{{ include "postgres.endpoint" . }}"
-            - name: METADATA_DB_PORT
+            - name: CORE_DB_PORT
               value: "{{ include "postgres.port" . }}"
-            - name: METADATA_DB_SSL_MODE
+            - name: CORE_DB_SSL_MODE
               value: "{{ include "postgres.sslMode" . }}"
             - name: STEAMPIPE_LOG_LEVEL
               value: "WARN"
@@ -58,10 +58,8 @@ spec:
               value: "http://compliance-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
             - name: SCHEDULER_BASEURL
               value: "http://scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
-            - name: INVENTORY_BASEURL
-              value: "http://inventory-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
-            - name: METADATA_BASEURL
-              value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
+            - name: CORE_BASEURL
+              value: "http://core-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
             - name: ESSINK_BASEURL
               value: "http://es-sink-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
             - name: PENNYWISE_BASE_URL

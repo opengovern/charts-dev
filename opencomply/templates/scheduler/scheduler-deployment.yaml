@@ -83,10 +83,8 @@ spec:
           value: "2"
         - name: MUST_SUMMARIZE_INTERVAL_HOURS
           value: "4"
-        - name: INVENTORY_BASE_URL
-          value: "http://inventory-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
-        - name: METADATA_BASE_URL
-          value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
+        - name: CORE_BASE_URL
+          value: "http://core-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
         - name: COMPLIANCE_BASE_URL
           value: "http://compliance-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
         - name: INTEGRATION_BASE_URL

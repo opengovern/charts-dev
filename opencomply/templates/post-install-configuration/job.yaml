@@ -57,8 +57,8 @@ spec:
               value: "https://github.com/opengovern/platform-configuration"
             - name: CONTROL_ENRICHMENT_GIT_URL
               value: "https://github.com/kaytu-io/control-enrichmentor"
-            - name: METADATA_BASEURL
-              value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
+            - name: CORE_BASEURL
+              value: "http://core-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
             - name: GITHUB_TOKEN
               value: "{{ .Values.github.token }}"
             - name: PROMETHEUS_PUSH_ADDRESS

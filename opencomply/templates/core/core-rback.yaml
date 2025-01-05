@@ -80,7 +80,7 @@ metadata:
   name: {{ .Release.Name }}-helmrelease-fullaccess
 subjects:
   - kind: ServiceAccount
-    name: metadata
+    name: core
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
@@ -90,13 +90,13 @@ roleRef:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: metadata-local-secret-access
+  name: core-local-secret-access
   namespace: {{ .Release.Namespace }}
 subjects:
   - kind: ServiceAccount
-    name: metadata
+    name: core
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
-  name: metadata-local-secret-access
+  name: core-local-secret-access
   apiGroup: rbac.authorization.k8s.io

@@ -74,5 +74,5 @@ spec:
           value: "{{ .Release.Name }}-nats.{{ .Release.Namespace }}.svc.cluster.local:4222"
         - name: SCALED_OBJECT_NATS_URL
           value: "{{ .Release.Namespace }}-nats-headless.{{ .Release.Namespace }}.svc.cluster.local:8222"
-        - name: INVENTORY_BASEURL
-          value: "http://inventory-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
+        - name: CORE_BASEURL
+          value: "http://core-service.{{ .Release.Namespace }}.svc.cluster.local:7251"

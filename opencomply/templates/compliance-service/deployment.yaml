@@ -56,12 +56,10 @@ spec:
           value: "0.0.0.0:7251"
         - name: SCHEDULER_BASEURL
           value: "http://scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
-        - name: INVENTORY_BASEURL
-          value: "http://inventory-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
         - name: INTEGRATION_BASEURL
           value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
-        - name: METADATA_BASEURL
-          value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
+        - name: CORE_BASEURL
+          value: "http://core-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
         - name: JAEGER_AGENT_HOST
           valueFrom:
             fieldRef:

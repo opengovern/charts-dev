@@ -47,8 +47,8 @@ spec:
               value: "prom-system-prometheus-pushgateway.prom-system.svc.cluster.local:9091"
             - name: INTEGRATION_BASE_URL
               value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
-            - name: METADATA_BASE_URL
-              value: "http://metadata-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
+            - name: CORE_BASE_URL
+              value: "http://core-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
             - name: AUTH_BASE_URL
               value: "http://auth-service.{{ .Release.Namespace }}.svc.cluster.local:8251"
             - name: JAEGER_AGENT_HOST

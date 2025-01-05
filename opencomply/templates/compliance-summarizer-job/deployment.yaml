@@ -36,8 +36,8 @@ spec:
               value: "{{ .Release.Name }}-nats.{{ .Release.Namespace }}.svc.cluster.local:4222"
 {{- include "elastic.envs" . | indent 12 }}
 
-            - name: INVENTORY_BASEURL
-              value: "http://inventory-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
+            - name: CORE_BASEURL
+              value: "http://core-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
             - name: INTEGRATION_BASEURL
               value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
             - name: ESSINK_BASEURL
@@ -83,8 +83,8 @@ spec:
               value: "{{ .Release.Namespace }}-nats.{{ .Release.Namespace }}.svc.cluster.local:4222"
 {{- include "elastic.envs" . | indent 12 }}
 
-            - name: INVENTORY_BASEURL
-              value: "http://inventory-service.{{ .Release.Namespace }}.svc.cluster.local:7251"
+            - name: CORE_BASEURL
+              value: "http://core-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
             - name: INTEGRATION_BASEURL
               value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
             - name: ESSINK_BASEURL
