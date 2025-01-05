@@ -92,7 +92,6 @@ spec:
           value: "http://{{ .Release.Name }}-vault-internal.{{ .Release.Namespace }}.svc.cluster.local:8200"
         - name: CORE_VAULT__KEY_ID
           value: {{ .Values.opengovernance.vault.keyID }}
-
         - name: STEAMPIPE_HOST
           value: steampipe-service.{{ .Release.Namespace }}.svc.cluster.local
         - name: STEAMPIPE_PORT
@@ -104,7 +103,7 @@ spec:
         - name: STEAMPIPE_DB
           value: "steampipe"
         - name: HTTP_ADDRESS
-          value: "0.0.0.0:7251"
+          value: "0.0.0.0:6251"
         - name: SCHEDULER_BASE_URL
           value: "http://scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
         - name: INTEGRATION_BASE_URL
