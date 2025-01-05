@@ -54,7 +54,7 @@ spec:
             - name: HTTP_ADDRESS
               value: "0.0.0.0:6251"
             - name: ANALYTICS_GIT_URL
-              value: "https://github.com/opengovern/sandbox-configuration"
+              value: "https://github.com/opengovern/platform-configuration"
             - name: CONTROL_ENRICHMENT_GIT_URL
               value: "https://github.com/kaytu-io/control-enrichmentor"
             - name: CORE_BASEURL
@@ -692,7 +692,7 @@ data:
       {"key": "data_retention_duration", "type": "int", "value": "366"},
       {"key": "connection_limit", "type": "int", "value": "1000"},
       {"key": "user_limit", "type": "int", "value": "1000"},
-      {"key": "analytics_git_url", "type": "string", "value": "https://github.com/opengovern/sandbox-configuration"},
+      {"key": "analytics_git_url", "type": "string", "value": "https://github.com/opengovern/platform-configuration/archive/refs/tags/v1.0.0.zip"},
       {"key": "asset_discovery_aws_policy_arns", "type": "string", "value": "arn:aws:iam::aws:policy/SecurityAudit,arn:aws:iam::aws:policy/ReadOnlyAccess"},
       {"key": "spend_discovery_aws_policy_arns", "type": "string", "value": "arn:aws:iam::aws:policy/AWSBillingReadOnlyAccess"},
       {"key": "asset_discovery_azure_role_ids", "type": "string", "value": "/subscriptions/%s/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7"},
