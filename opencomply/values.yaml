@@ -12,11 +12,11 @@ opengovernance:
       auth: v0.572.0
       swagger: v0.476.2
       checkupJob: v0.572.0
-      postInstallJob: v0.576.4
-      schedulerService: v0.572.0
+      postInstallJob: v0.577.10
+      schedulerService: v0.577.6
       integration: v0.572.0
       core: v0.576.1
-      compliance: v0.572.0
+      compliance: v0.577.7
       complianceSummarizerJob: v0.572.0
       complianceReportJob: v0.572.0
       steampipe: v0.572.0
@@ -52,6 +52,7 @@ opengovernance:
     keyID: "workspace-creds"
   parallelism:
     complianceReportJobMaxParallelism: 10
+    complianceQuickJobMaxParallelism: 5
 dex:
   configSecret:
     create: false
