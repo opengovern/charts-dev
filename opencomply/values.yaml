@@ -17,17 +17,17 @@ opengovernance:
       integration: v0.578.2
       core: v0.578.2
       compliance: v0.577.20
-      complianceSummarizerJob: v0.577.20
-      complianceReportJob: v0.577.20
-      steampipe: v0.577.20
+      complianceSummarizerJob: v0.578.3
+      complianceReportJob: v0.578.3
+      steampipe: v0.578.3
       esSink: v0.572.0
-      complianceQuick: v0.577.20
-      queryRunnerJob: v0.577.20
-      queryValidatorJob: v0.577.20
+      complianceQuick: v0.578.3
+      queryRunnerJob: v0.578.3
+      queryValidatorJob: v0.578.3
       demoImporterJob: v0.572.0
       psqlImport: v0.572.0
       tasks: v0.572.0
-      rego: v0.572.0
+      rego: v0.578.3
   apikey:
     public: ""
     private: ""
