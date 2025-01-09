@@ -12,7 +12,7 @@ opengovernance:
       auth: v0.572.0
       swagger: v0.476.2
       checkupJob: v0.577.20
-      postInstallJob: v0.580.1
+      postInstallJob: v0.580.7
       schedulerService: v0.580.3
       integration: v0.579.12
       core: v0.580.6
