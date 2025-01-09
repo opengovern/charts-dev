@@ -91,34 +91,34 @@ spec:
               mountPath: /integrations/integration_types.json
               subPath: integration_types.json
             - name: migrator-config
-              mountPath: /metadata-migration/metadata.json
+              mountPath: /core-migration/metadata.json
               subPath: metadata.json
             - name: migrator-config
-              mountPath: /metadata-migration/query_parameters.json
+              mountPath: /core-migration/query_parameters.json
               subPath: query_parameters.json
             - name: migrator-config
-              mountPath: /metadata-migration/chat_prompt.txt
+              mountPath: /core-migration/chat_prompt.txt
               subPath: chat_prompt.txt
             - name: migrator-config
-              mountPath: /metadata-migration/main_prompt.txt
+              mountPath: /core-migration/main_prompt.txt
               subPath: main_prompt.txt
             - name: migrator-config
-              mountPath: /metadata-migration/assets_chat_prompt.txt
+              mountPath: /core-migration/assets_chat_prompt.txt
               subPath: assets_chat_prompt.txt
             - name: migrator-config
-              mountPath: /metadata-migration/assets_main_prompt.txt
+              mountPath: /core-migration/assets_main_prompt.txt
               subPath: assets_main_prompt.txt
             - name: migrator-config
-              mountPath: /metadata-migration/score_chat_prompt.txt
+              mountPath: /core-migration/score_chat_prompt.txt
               subPath: score_chat_prompt.txt
             - name: migrator-config
-              mountPath: /metadata-migration/score_main_prompt.txt
+              mountPath: /core-migration/score_main_prompt.txt
               subPath: score_main_prompt.txt
             - name: migrator-config
-              mountPath: /metadata-migration/compliance_chat_prompt.txt
+              mountPath: /core-migration/compliance_chat_prompt.txt
               subPath: compliance_chat_prompt.txt
             - name: migrator-config
-              mountPath: /metadata-migration/compliance_main_prompt.txt
+              mountPath: /core-migration/compliance_main_prompt.txt
               subPath: compliance_main_prompt.txt
       volumes:
         - name: elasticsearch-index-config
