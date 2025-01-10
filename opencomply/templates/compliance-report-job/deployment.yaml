@@ -70,6 +70,8 @@ spec:
               value: "http://scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
             - name: CORE_BASEURL
               value: "http://core-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
+            - name: INTEGRATION_BASEURL
+              value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
             - name: ESSINK_BASEURL
               value: "http://es-sink-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
 
@@ -154,6 +156,8 @@ spec:
               value: "http://scheduler.{{ .Release.Namespace }}.svc.cluster.local:5251"
             - name: CORE_BASEURL
               value: "http://core-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
+            - name: INTEGRATION_BASEURL
+              value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
             - name: ESSINK_BASEURL
               value: "http://es-sink-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
 
