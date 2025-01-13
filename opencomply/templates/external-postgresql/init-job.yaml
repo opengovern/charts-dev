@@ -132,6 +132,8 @@ spec:
             integrationDatabaseName="integration"
             integrationUserName="integration_service"
 
+            integrationTypesDatabaseName="integration_types"
+
             echo "$dt - Running: psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_PASSWORD" ...";
 
             PGPASSWORD="$POSTGRES_PASSWORD" psql -v ON_ERROR_STOP=1 --host="$POSTGRES_HOST" --port="$POSTGRES_PORT" --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
@@ -200,6 +202,9 @@ spec:
             GRANT ALL ON SCHEMA public TO $assistantUserName;
             CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
             CREATE EXTENSION IF NOT EXISTS citext;
+
+            SELECT 'CREATE DATABASE $integrationTypesDatabaseName'
+            WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$integrationTypesDatabaseName')\gexec
 
             SELECT 'CREATE DATABASE $complianceDatabaseName'
             WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$complianceDatabaseName')\gexec
@@ -297,6 +302,12 @@ spec:
             GRANT pg_read_all_data TO $migratorUserName;
             GRANT pg_write_all_data TO $migratorUserName;
             GRANT pg_read_all_data TO $steampipeUserName;
+            \connect "$integrationTypesDatabaseName";
+            GRANT pg_read_all_data TO $migrationUserName;
+            GRANT pg_write_all_data TO $migrationUserName;
+            GRANT pg_read_all_data TO $steampipeUserName;
+            GRANT pg_read_all_data TO $integrationUserName;
+
 
 
             \connect "postgres";
