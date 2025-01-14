@@ -32,6 +32,17 @@ spec:
           #    cpu: 500m
           #    memory: 100Mi
           env:
+            - name: POSTGRESPLUGIN_HOST
+              value: "{{ include "postgres.endpoint" . }}"
+            - name: POSTGRESPLUGIN_PORT
+              value: "{{ include "postgres.port" . }}"
+            - name: POSTGRESPLUGIN_USERNAME
+              value: "steampipe_user"
+            - name: POSTGRESPLUGIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: steampipeUserPassword
             - name: PG_PASSWORD
               valueFrom:
                 secretKeyRef:

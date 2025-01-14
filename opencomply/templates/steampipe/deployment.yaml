@@ -20,7 +20,8 @@ spec:
       containers:
       - name: steampipe-service
         image: "{{ .Values.opengovernance.docker.registry }}/steampipe-service:{{ .Values.opengovernance.docker.tags.steampipe }}"
-        command: ["steampipe", "service", "start", "--database-listen", "network", "--database-port", "9193", "--database-password", "abcd", "--foreground"]
+        command: ["/bin/bash", "-c",
+                  "/cloudql-init-job && steampipe service start --database-listen network --database-port 9193 --database-password abcd --foreground"]
         imagePullPolicy: Always
         resources:
 {{- if eq (.Values.global.size | toString) "xs" }}
@@ -42,6 +43,17 @@ spec:
 {{- end }}
         env:
 {{- include "elastic.envs" . | indent 10 }}
+          - name: POSTGRES_HOST
+            value: "{{ include "postgres.endpoint" . }}"
+          - name: POSTGRES_PORT
+            value: "{{ include "postgres.port" . }}"
+          - name: POSTGRES_USERNAME
+            value: "steampipe_user"
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: steampipeUserPassword
           - name: PG_PASSWORD
             valueFrom:
               secretKeyRef:
@@ -61,24 +73,6 @@ spec:
             value: "false"
           - name: CORE_BASEURL
             value: "http://core-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
-        volumeMounts:
-#          - name: steampipe-content
-#            mountPath: /home/steampipe/.steampipe/
-          - name: steampipe-spc
-            mountPath: /home/steampipe/.steampipe/config/aws.spc
-            subPath: aws.spc
-          - name: steampipe-spc
-            mountPath: /home/steampipe/.steampipe/config/azure.spc
-            subPath: azure.spc
-          - name: steampipe-spc
-            mountPath: /home/steampipe/.steampipe/config/entraid.spc
-            subPath: entraid.spc
-          - name: steampipe-spc
-            mountPath: /home/steampipe/.steampipe/config/opengovernance.spc
-            subPath: opengovernance.spc
-      volumes:
-        - name: steampipe-spc
-          configMap:
-            name: steampipe-service-config
-#        - name: steampipe-content
-#          emptyDir: {}
+          - name: INTEGRATION_BASEURL
+            value: "http://integration-service.{{ .Release.Namespace }}.svc.cluster.local:8000"
+

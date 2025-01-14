@@ -42,3 +42,14 @@ spec:
             value: "false"
           - name: STEAMPIPE_UPDATE_CHECK
             value: "false"
+          - name: POSTGRESPLUGIN_HOST
+            value: "{{ include "postgres.endpoint" . }}"
+          - name: POSTGRESPLUGIN_PORT
+            value: "{{ include "postgres.port" . }}"
+          - name: POSTGRESPLUGIN_USERNAME
+            value: "steampipe_user"
+          - name: POSTGRESPLUGIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-secret
+                key: steampipeUserPassword
