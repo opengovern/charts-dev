@@ -10,7 +10,7 @@
         "number_of_shards": 18,
         "mapping":{
           "total_fields": {
-              "limit": "10000"
+            "limit": "10000"
           },
           "nested_fields": {
             "limit": "10000"
@@ -86,6 +86,14 @@
         },
         "is_common": {
           "type": "boolean"
+        },
+        "metadata": {
+          "type": "nested",
+          "properties": {
+            "parameters": {
+              "type": "keyword"
+            }
+          }
         },
         "canonical_tags": {
           "type": "nested",
