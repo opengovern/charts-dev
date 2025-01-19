@@ -19,7 +19,7 @@ opengovernance:
       compliance: v2.13.1-dev.2
       complianceSummarizerJob: v2.13.1-dev.2
       complianceReportJob: v2.13.1-dev.2
-      steampipe: v2.13.1-dev.2
+      cloudql: v2.13.1-dev.2
       esSink: v2.13.1-dev.2
       complianceQuick: v2.13.1-dev.2
       queryRunnerJob: v2.13.1-dev.2

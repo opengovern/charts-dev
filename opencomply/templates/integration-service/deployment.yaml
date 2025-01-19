@@ -50,7 +50,7 @@ spec:
           value: "http://core-service.{{ .Release.Namespace }}.svc.cluster.local:6251"
 
         - name: INTEGRATION_STEAMPIPE__HOST
-          value: steampipe-service.{{ .Release.Namespace }}.svc.cluster.local
+          value: cloudql-service.{{ .Release.Namespace }}.svc.cluster.local
         - name: INTEGRATION_STEAMPIPE__PORT
           value: "9193"
         - name: INTEGRATION_STEAMPIPE__USERNAME

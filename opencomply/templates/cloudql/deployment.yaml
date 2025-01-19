@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: steampipe-service
+  name: cloudql-service
   namespace: {{ .Release.Namespace }}
   labels:
-    app: steampipe-service
+    app: cloudql-service
 spec:
   minReadySeconds: 10
   replicas: {{ .Values.opengovernance.replicaCount }}
   selector:
     matchLabels:
-      app: steampipe-service
+      app: cloudql-service
   template:
     metadata:
       labels:
-        app: steampipe-service
+        app: cloudql-service
     spec:
-      serviceAccountName: steampipe
+      serviceAccountName: cloudql
       containers:
-      - name: steampipe-service
-        image: "{{ .Values.opengovernance.docker.registry }}/steampipe-service:{{ .Values.opengovernance.docker.tags.steampipe }}"
+      - name: cloudql-service
+        image: "{{ .Values.opengovernance.docker.registry }}/cloudql-service:{{ .Values.opengovernance.docker.tags.cloudql }}"
         command: ["/bin/bash", "-c",
                   "/cloudql-init-job && steampipe service start --database-listen network --database-port 9193 --database-password abcd --foreground"]
         imagePullPolicy: Always

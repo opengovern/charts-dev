@@ -93,7 +93,7 @@ spec:
         - name: CORE_VAULT__KEY_ID
           value: {{ .Values.opengovernance.vault.keyID }}
         - name: STEAMPIPE_HOST
-          value: steampipe-service.{{ .Release.Namespace }}.svc.cluster.local
+          value: cloudql-service.{{ .Release.Namespace }}.svc.cluster.local
         - name: STEAMPIPE_PORT
           value: "9193"
         - name: STEAMPIPE_USERNAME
