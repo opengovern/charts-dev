@@ -11,23 +11,23 @@ opengovernance:
       webui: v2.8.0
       auth: v2.14.0-dev.2
       swagger: v2.14.0-dev.2
-      checkupJob: v2.14.0-dev.2
-      postInstallJob: v2.13.2-dev.0
-      schedulerService: v2.14.0-dev.2
-      integration: v2.14.0-dev.2
-      core: v2.14.0-dev.2
-      compliance: v2.14.0-dev.2
-      complianceSummarizerJob: v2.14.0-dev.2
-      complianceReportJob: v2.14.0-dev.2
-      cloudql: v2.14.0-dev.2
+      checkupJob: v2.15.0-dev.1
+      postInstallJob: v2.16.1-dev.0
+      schedulerService: v2.15.0-dev.1
+      integration: v2.15.0-dev.1
+      core: v2.15.0-dev.1
+      compliance: v2.15.0-dev.1
+      complianceSummarizerJob: v2.15.0-dev.1
+      complianceReportJob: v2.15.0-dev.1
+      cloudql: v2.16.1-dev.1
       esSink: v2.14.0-dev.2
-      complianceQuick: v2.14.0-dev.2
-      queryRunnerJob: v2.14.0-dev.2
-      queryValidatorJob: v2.14.0-dev.2
-      demoImporterJob: v2.6.0-dev.1
-      psqlImport: v2.6.0-dev.1
-      tasks: v2.14.0-dev.2
-      rego: v2.14.0-dev.2
+      complianceQuick: v2.15.2-dev.0
+      queryRunnerJob: v2.15.0-dev.1
+      queryValidatorJob: v2.15.0-dev.1
+      demoImporterJob: v2.15.0-dev.1
+      psqlImport: v2.15.0-dev.1
+      tasks: v2.15.0-dev.1
+      rego: v2.15.2-dev.0
   apikey:
     public: ""
     private: ""
