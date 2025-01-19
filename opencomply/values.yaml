@@ -12,9 +12,9 @@ opengovernance:
       auth: v2.17.0-dev.1
       swagger: v2.17.0-dev.1
       checkupJob: v2.17.0-dev.1
-      postInstallJob: v2.19.6-dev.0
+      postInstallJob: v2.19.7-dev.0
       schedulerService: v2.17.0-dev.1
-      integration: v2.19.4-dev.0
+      integration: v2.19.7-dev.0
       core: v2.17.0-dev.1
       compliance: v2.17.0-dev.1
       complianceSummarizerJob: v2.17.0-dev.1
