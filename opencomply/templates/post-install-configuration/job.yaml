@@ -64,7 +64,7 @@ spec:
             - name: PROMETHEUS_PUSH_ADDRESS
               value: "prom-system-prometheus-pushgateway.prom-system.svc.cluster.local:9091"
             - name: IS_MANUAL
-              value: "true"
+              value: "false"
             - name: JAEGER_AGENT_HOST
               valueFrom:
                 fieldRef:
