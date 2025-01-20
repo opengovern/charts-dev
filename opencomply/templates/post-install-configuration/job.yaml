@@ -87,9 +87,7 @@ spec:
               mountPath: /elasticsearch-index-config
             - name: inventory-data-config
               mountPath: /inventory-data-config
-            - name: migrator-config
-              mountPath: /integrations/integration_types.json
-              subPath: integration_types.json
+
             - name: migrator-config
               mountPath: /core-migration/metadata.json
               subPath: metadata.json
