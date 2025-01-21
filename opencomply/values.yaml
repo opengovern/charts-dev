@@ -14,7 +14,7 @@ opengovernance:
       checkupJob: v2.24.0-dev.8
       postInstallJob: v2.24.0-dev.8
       schedulerService: v2.24.0-dev.8
-      integration: v2.24.0-dev.8
+      integration: v2.24.2-dev.0
       core: v2.24.0-dev.8
       compliance: v2.24.0-dev.8
       complianceSummarizerJob: v2.24.0-dev.8
