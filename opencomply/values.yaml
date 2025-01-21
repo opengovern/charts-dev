@@ -12,22 +12,22 @@ opengovernance:
       auth: v2.26.1-dev.1
       swagger: v2.26.1-dev.1
       checkupJob: v2.26.1-dev.1
-      postInstallJob: v2.26.1-dev.1
-      schedulerService: v2.26.1-dev.1
-      integration: v2.26.1-dev.1
-      core: v2.26.1-dev.1
-      compliance: v2.26.1-dev.1
+      postInstallJob: v2.27.3-dev.0
+      schedulerService: v2.27.1-dev.0
+      integration: v2.13.4
+      core: v2.27.1-dev.0
+      compliance: v2.27.1-dev.0
       complianceSummarizerJob: v2.26.1-dev.1
-      complianceReportJob: v2.26.1-dev.1
-      cloudql: v2.26.1-dev.1
+      complianceReportJob: v2.27.1-dev.0
+      cloudql: v2.27.1-dev.0
       esSink: v2.26.1-dev.1
-      complianceQuick: v2.26.1-dev.1
-      queryRunnerJob: v2.26.1-dev.1
-      queryValidatorJob: v2.26.1-dev.1
+      complianceQuick: v2.27.1-dev.0
+      queryRunnerJob: v2.27.1-dev.0
+      queryValidatorJob: v2.27.1-dev.0
       demoImporterJob: v2.26.1-dev.1
       psqlImport: v2.26.1-dev.1
       tasks: v2.26.1-dev.1
-      rego: v2.26.1-dev.1
+      rego: v2.27.1-dev.0
   apikey:
     public: ""
     private: ""
