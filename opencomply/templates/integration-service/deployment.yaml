@@ -25,10 +25,10 @@ spec:
         resources:
          limits:
            cpu: 500m
-           memory: 6Gi
+           memory: 4Gi
          requests:
            cpu: 500m
-           memory: 3Gi
+           memory: 2Gi
         env:
         - name: INTEGRATION_POSTGRES__HOST
           value: "{{ include "postgres.endpoint" . }}"
