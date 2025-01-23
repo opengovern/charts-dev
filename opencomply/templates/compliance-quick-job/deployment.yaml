@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: compliance-quick-worker
+    cloudql-enabled: true
 spec:
   minReadySeconds: 10
   replicas: 0
@@ -15,6 +16,7 @@ spec:
     metadata:
       labels:
         app: compliance-quick-worker
+        cloudql-enabled: true
     spec:
       containers:
         - name: audit-worker

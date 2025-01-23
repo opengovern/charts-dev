@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: query-runner-worker
+    cloudql-enabled: true
 spec:
   minReadySeconds: 10
   replicas: 1
@@ -15,6 +16,7 @@ spec:
     metadata:
       labels:
         app: query-runner-worker
+        cloudql-enabled: true
     spec:
       containers:
         - name: query-runner-worker

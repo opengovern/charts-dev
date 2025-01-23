@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: rego-service
+    cloudql-enabled: true
 spec:
   minReadySeconds: 10
   replicas: {{ .Values.opengovernance.replicaCount }}
@@ -15,6 +16,7 @@ spec:
     metadata:
       labels:
         app: rego-service
+        cloudql-enabled: true
     spec:
       containers:
       - name: rego-service

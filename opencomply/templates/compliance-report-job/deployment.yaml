@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: compliance-worker
+    cloudql-enabled: true
 spec:
   minReadySeconds: 10
   replicas: 1
@@ -15,6 +16,7 @@ spec:
     metadata:
       labels:
         app: compliance-worker
+        cloudql-enabled: true
     spec:
       serviceAccountName: compliance-report-worker
       containers:
@@ -113,6 +115,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: compliance-worker-manual
+    cloudql-enabled: true
 spec:
   minReadySeconds: 10
   replicas: 1
@@ -123,6 +126,7 @@ spec:
     metadata:
       labels:
         app: compliance-worker-manual
+        cloudql-enabled: true
     spec:
       serviceAccountName: compliance-report-worker
       containers:

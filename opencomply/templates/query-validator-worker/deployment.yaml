@@ -6,12 +6,14 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: query-validator-worker
+    cloudql-enabled: true
 spec:
   minReadySeconds: 10
   replicas: 1
   selector:
     matchLabels:
       app: query-validator-worker
+      cloudql-enabled: true
   template:
     metadata:
       labels:
