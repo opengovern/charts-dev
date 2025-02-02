@@ -1,0 +1,16 @@
+{{ if ".Values.debug-mode" }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      service-monitor: {{ .Release.Name }}
+  endpoints:
+    - port: http
+      interval: 15s
+{{ end }}
