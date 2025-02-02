@@ -36,3 +36,7 @@ dependencies:
   - name: opensearch-dashboards
     version: 2.20.0
     condition: opensearch-dashboards.enabled
+  - name: kube-prometheus-stack
+    version: 68.4.4
+    condition: debug-mode
+    
