@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: scheduler
-    monitoring: kaytu
+    service-monitor: {{ .Release.Name }}
 spec:
   selector:
     app: scheduler
@@ -24,7 +24,7 @@ spec:
 #  namespace: {{ .Release.Namespace }}
 #  labels:
 #    app: describe-receiver
-#    monitoring: kaytu
+#    service-monitor: {{ .Release.Name }}
 #spec:
 #  selector:
 #    app: describe-receiver
