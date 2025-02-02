@@ -334,7 +334,7 @@ queryvalidator:
 
 
 # Following charts are only enabled if debug-mode is set to true. They could cause crd collision in existing clusters do not enable them unless you know what you are doing
-debug-mode: false
+debug-mode: true
 
 kube-prometheus-stack:
 
